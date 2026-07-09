@@ -47,7 +47,7 @@ Copy and track progress:
 REF=forest   # or nearest match
 ID=<new-id>
 cp -R "Resources/Themes/${REF}" "Resources/Themes/${ID}"
-rm -f "Resources/Themes/${ID}/theme.yaml" "Resources/Themes/${ID}/theme.json"
+rm -f "Resources/Themes/${ID}/theme.yaml"
 ```
 
 Keep copied PNGs only as temporary placeholders until real assets exist.
@@ -167,8 +167,11 @@ values and layers toward the new brief.
 python3 scripts/compile_themes.py
 ```
 
-Confirm `Resources/Themes/<id>/theme.json` was written. Commit **both**
-`theme.yaml` and `theme.json`.
+This writes to `build/CompiledThemes/` for local validation. Xcode builds
+compile straight into the app bundle via `scripts/bundle_themes.sh`.
+
+Commit `theme.yaml` only — do not add `theme.json` beside it in
+`Resources/Themes/`.
 
 ## Step 5 — Build (when validating)
 

@@ -1,7 +1,23 @@
-Copyright 2011 The Quicksand Project Authors (https://github.com/andrew-paglinawan/QuicksandFamily), with Reserved Font Name "Quicksand".
+Bundled fonts in GlyphQuest
+============================
 
-This Font Software is licensed under the SIL Open Font License, Version 1.1.
-This license is copied below, and is also available with a FAQ at:
+Cinzel Black (Cinzel-Black.ttf)
+Copyright © 2012 Natanael Gama (info@ndiscovered.com), with Reserved Font Name 'Cinzel'
+
+Exo 2 ExtraBold (Exo2-ExtraBold.ttf)
+Copyright 2013 The Exo 2 Project Authors (https://github.com/NDISCOVER/Exo-2.0)
+
+Nunito ExtraBold (Nunito-ExtraBold.ttf)
+Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/NunitoFont)
+
+Orbitron Black (Orbitron-Black.ttf)
+Copyright 2018 The Orbitron Project Authors (https://github.com/theleagueof/orbitron)
+
+Quicksand Bold (Quicksand-Bold.ttf)
+Copyright 2019 The Quicksand Project Authors (https://github.com/andrew-paglinawan/QuicksandFamily.git), with Reserved Font Name "Quicksand"
+
+The Font Software listed above is licensed under the SIL Open Font License,
+Version 1.1. This license is copied below, and is also available with a FAQ at:
 http://scripts.sil.org/OFL
 
 

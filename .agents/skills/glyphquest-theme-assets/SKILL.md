@@ -23,7 +23,6 @@ Resources/
   Themes/
     <id>/
       theme.yaml             # source (edit this)
-      theme.json             # generated (committed; compile_themes.py)
       scene.png
       card.png
       toggle-off.png
@@ -32,8 +31,9 @@ Resources/
 ```
 
 The folder name must match `id` in `theme.yaml`. At build time,
-`scripts/compile_themes.py` compiles each `theme.yaml` to `theme.json`.
-Runtime loads JSON only via `GQThemeLoader`.
+`scripts/compile_themes.py` compiles each `theme.yaml` to `theme.json` in the
+app bundle (`build/CompiledThemes/` when run locally). Source folders stay
+YAML-only; JSON is never committed next to YAML.
 
 ## Required PNG assets
 
@@ -168,7 +168,7 @@ font for reliable CJK rendering.
 2. Replace `scene.png`, `card.png`, `toggle-off.png`, `toggle-on.png`.
 3. Edit `theme.yaml` (colours, card caps, progress shape/layers/overlays).
 4. Run `python3 scripts/compile_themes.py` (or build in Xcode).
-5. Commit both `theme.yaml` and generated `theme.json`.
+5. Commit `theme.yaml` only; `theme.json` is a build artefact.
 
 No ObjC changes are required unless adding a new progress layer kind.
 

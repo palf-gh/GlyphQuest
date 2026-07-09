@@ -12,7 +12,6 @@
 		8D8F90052E1F000100000001 /* GlyphsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D8F90062E1F000100000001 /* GlyphsCore.framework */; };
 		8D8F901E2E1F000100000001 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D8F901F2E1F000100000001 /* CoreText.framework */; };
 		8D8F91802E1F000100000001 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 8D8F91812E1F000100000001 /* Fonts */; };
-		8D8F91822E1F000100000001 /* Themes in Resources */ = {isa = PBXBuildFile; fileRef = 8D8F91832E1F000100000001 /* Themes */; };
 		8D8F91842E1F000100000001 /* GQThemeLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8F91852E1F000100000001 /* GQThemeLoader.m */; };
 		8D8F91862E1F000100000001 /* GQProgressRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8F91872E1F000100000001 /* GQProgressRenderer.m */; };
 /* End PBXBuildFile section */
@@ -97,7 +96,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8D8F90112E1F000100000001 /* Build configuration list for PBXNativeTarget "GlyphQuest" */;
 			buildPhases = (
-				8D8F918A2E1F000100000001 /* Compile Themes */,
+				8D8F918A2E1F000100000001 /* Bundle Themes */,
 				8D8F90122E1F000100000001 /* Sources */,
 				8D8F900B2E1F000100000001 /* Frameworks */,
 				8D8F90132E1F000100000001 /* Resources */,
@@ -152,29 +151,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D8F91802E1F000100000001 /* Fonts in Resources */,
-				8D8F91822E1F000100000001 /* Themes in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8D8F918A2E1F000100000001 /* Compile Themes */ = {
+		8D8F918A2E1F000100000001 /* Bundle Themes */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/scripts/bundle_themes.sh",
 				"$(SRCROOT)/scripts/compile_themes.py",
 				"$(SRCROOT)/Resources/Themes",
 			);
-			name = "Compile Themes";
+			name = "Bundle Themes";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "python3 \"${SRCROOT}/scripts/compile_themes.py\"\n";
+			shellScript = "\"${SRCROOT}/scripts/bundle_themes.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

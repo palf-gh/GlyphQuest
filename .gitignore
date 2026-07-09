@@ -14,6 +14,7 @@ DerivedData/
 # Build intermediates (release bundle lives in release/)
 build/
 *.dSYM/
+Resources/Themes/**/theme.json
 
 # Temporary files
 *.tmp

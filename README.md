@@ -59,7 +59,7 @@ GQProgressRenderer.m     # プログレスレイヤー描画
 Info.plist
 Resources/
   Fonts/                 # 同梱フォント + OFL.txt
-  Themes/<id>/           # theme.yaml, theme.json, PNG
+  Themes/<id>/           # theme.yaml + PNG (JSON is build output)
 scripts/compile_themes.py
 GlyphQuest.xcodeproj/    # Xcode プロジェクト
 release/                 # 配布用 Release ビルド（git 追跡）
@@ -72,7 +72,7 @@ Release ビルド:
 xcodebuild -project GlyphQuest.xcodeproj -scheme GlyphQuest -configuration Release -derivedDataPath DerivedData SYMROOT=build OBJROOT=build/Intermediates build
 ```
 
-テーマは `Resources/Themes/<id>/` に置きます。`theme.yaml` で色・カード cap・プログレスバーの shape / layers / overlays を定義し、ビルド時に `theme.json` へコンパイルされます。必須 PNG は `scene.png`、`card.png`、`toggle-off.png`、`toggle-on.png` です。新規テーマは既存フォルダをコピーして YAML と PNG を差し替えるだけで追加できます。トグル画像は文字なしで、表示テキストは Cocoa 側で描画します。
+テーマは `Resources/Themes/<id>/` に置きます。`theme.yaml` と PNG だけがソースで、ビルド時に bundle 内へ `theme.json` が生成されます（ソース横には置きません）。必須 PNG は `scene.png`、`card.png`、`toggle-off.png`、`toggle-on.png` です。新規テーマは既存フォルダをコピーして YAML と PNG を差し替えるだけで追加できます。トグル画像は文字なしで、表示テキストは Cocoa 側で描画します。
 
 ビルド後、配布用 bundle を更新する場合:
 
@@ -156,7 +156,7 @@ GQProgressRenderer.m     # 进度条图层渲染
 Info.plist
 Resources/
   Fonts/                 # 内置字体 + OFL.txt
-  Themes/<id>/           # theme.yaml, theme.json, PNG
+  Themes/<id>/           # theme.yaml + PNG (JSON is build output)
 scripts/compile_themes.py
 GlyphQuest.xcodeproj/    # Xcode 项目
 release/                 # 发布用 Release 构建（git 跟踪）
@@ -169,7 +169,7 @@ Release 构建:
 xcodebuild -project GlyphQuest.xcodeproj -scheme GlyphQuest -configuration Release -derivedDataPath DerivedData SYMROOT=build OBJROOT=build/Intermediates build
 ```
 
-主题位于 `Resources/Themes/<id>/`。在 `theme.yaml` 中定义颜色、卡片 cap 与进度条的 shape / layers / overlays，构建时编译为 `theme.json`。必需 PNG 为 `scene.png`、`card.png`、`toggle-off.png`、`toggle-on.png`。新增主题时复制现有文件夹并替换 YAML 与 PNG 即可。开关图片不包含文字，文字由 Cocoa 侧绘制。
+主题位于 `Resources/Themes/<id>/`。源码只有 `theme.yaml` 和 PNG，构建时在 bundle 内生成 `theme.json`（不会出现在源码目录）。必需 PNG 为 `scene.png`、`card.png`、`toggle-off.png`、`toggle-on.png`。新增主题时复制现有文件夹并替换 YAML 与 PNG 即可。开关图片不包含文字，文字由 Cocoa 侧绘制。
 
 构建后更新发布 bundle:
 
@@ -253,7 +253,7 @@ GQProgressRenderer.m     # 진행률 레이어 렌더러
 Info.plist
 Resources/
   Fonts/                 # 번들 폰트 + OFL.txt
-  Themes/<id>/           # theme.yaml, theme.json, PNG
+  Themes/<id>/           # theme.yaml + PNG (JSON is build output)
 scripts/compile_themes.py
 GlyphQuest.xcodeproj/    # Xcode 프로젝트
 release/                 # 배포용 Release 빌드 (git 추적)
@@ -266,7 +266,7 @@ Release 빌드:
 xcodebuild -project GlyphQuest.xcodeproj -scheme GlyphQuest -configuration Release -derivedDataPath DerivedData SYMROOT=build OBJROOT=build/Intermediates build
 ```
 
-테마는 `Resources/Themes/<id>/`에 둡니다. `theme.yaml`에서 색상, 카드 cap, 진행률 shape / layers / overlays를 정의하고 빌드 시 `theme.json`으로 컴파일됩니다. 필수 PNG는 `scene.png`, `card.png`, `toggle-off.png`, `toggle-on.png`입니다. 새 테마는 기존 폴더를 복사해 YAML과 PNG만 바꾸면 됩니다. 토글 이미지는 글자 없이 만들고, 텍스트는 Cocoa 쪽에서 그립니다.
+테마는 `Resources/Themes/<id>/`에 둡니다. 소스는 `theme.yaml`과 PNG만 포함하며, 빌드 시 bundle 안에 `theme.json`이 생성됩니다(소스 옆에는 두지 않음). 필수 PNG는 `scene.png`, `card.png`, `toggle-off.png`, `toggle-on.png`입니다. 새 테마는 기존 폴더를 복사해 YAML과 PNG만 바꾸면 됩니다. 토글 이미지는 글자 없이 만들고, 텍스트는 Cocoa 쪽에서 그립니다.
 
 빌드 후 배포 bundle 업데이트:
 
@@ -350,7 +350,7 @@ GQProgressRenderer.m     # Progress layer renderer
 Info.plist
 Resources/
   Fonts/                 # Bundled fonts + OFL.txt
-  Themes/<id>/           # theme.yaml, theme.json, PNG
+  Themes/<id>/           # theme.yaml + PNG (JSON is build output)
 scripts/compile_themes.py
 GlyphQuest.xcodeproj/    # Xcode project
 release/                 # Shipped Release build (tracked in git)
@@ -363,7 +363,7 @@ Release build:
 xcodebuild -project GlyphQuest.xcodeproj -scheme GlyphQuest -configuration Release -derivedDataPath DerivedData SYMROOT=build OBJROOT=build/Intermediates build
 ```
 
-Themes live in `Resources/Themes/<id>/`. Define colours, card caps, and progress shape / layers / overlays in `theme.yaml`; the build compiles each file to `theme.json`. Required PNGs are `scene.png`, `card.png`, `toggle-off.png`, and `toggle-on.png`. To add a theme, copy an existing folder and replace the YAML and PNGs. Toggle images are textless; Cocoa draws the localized label.
+Themes live in `Resources/Themes/<id>/`. Source contains `theme.yaml` and PNGs only; the build generates `theme.json` inside the app bundle, not beside the YAML in the repo. Required PNGs are `scene.png`, `card.png`, `toggle-off.png`, and `toggle-on.png`. To add a theme, copy an existing folder and replace the YAML and PNGs. Toggle images are textless; Cocoa draws the localized label.
 
 After building, refresh the shipped bundle:
 

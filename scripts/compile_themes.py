@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-"""Compile Resources/Themes/*/theme.yaml to theme.json (stdlib only)."""
+"""Compile Resources/Themes/*/theme.yaml to theme.json in a build output directory."""
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-THEMES_DIR = ROOT / "Resources" / "Themes"
+DEFAULT_SOURCE = ROOT / "Resources" / "Themes"
+DEFAULT_OUTPUT = ROOT / "build" / "CompiledThemes"
 
 
 class YAMLParser:
@@ -165,11 +167,12 @@ class YAMLParser:
         return value
 
 
-def compile_theme(theme_dir: Path) -> None:
-    yaml_path = theme_dir / "theme.yaml"
-    json_path = theme_dir / "theme.json"
+def compile_theme(source_dir: Path, output_dir: Path) -> None:
+    yaml_path = source_dir / "theme.yaml"
     if not yaml_path.exists():
         return
+    output_dir.mkdir(parents=True, exist_ok=True)
+    json_path = output_dir / "theme.json"
     data = YAMLParser(yaml_path.read_text(encoding="utf-8")).parse()
     json_path.write_text(
         json.dumps(data, indent=2, ensure_ascii=False) + "\n",
@@ -179,12 +182,31 @@ def compile_theme(theme_dir: Path) -> None:
 
 
 def main() -> int:
-    if not THEMES_DIR.exists():
-        print(f"Themes directory not found: {THEMES_DIR}", file=sys.stderr)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--source",
+        type=Path,
+        default=DEFAULT_SOURCE,
+        help="Directory containing theme source folders (default: Resources/Themes)",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=DEFAULT_OUTPUT,
+        help="Directory for compiled theme.json files (default: build/CompiledThemes)",
+    )
+    args = parser.parse_args()
+
+    source_dir = args.source.resolve()
+    output_dir = args.output.resolve()
+
+    if not source_dir.exists():
+        print(f"Themes source directory not found: {source_dir}", file=sys.stderr)
         return 1
-    for theme_dir in sorted(THEMES_DIR.iterdir()):
+
+    for theme_dir in sorted(source_dir.iterdir()):
         if theme_dir.is_dir():
-            compile_theme(theme_dir)
+            compile_theme(theme_dir, output_dir / theme_dir.name)
     return 0
 
 
