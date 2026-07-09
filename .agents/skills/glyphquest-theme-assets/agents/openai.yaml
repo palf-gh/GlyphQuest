@@ -1,0 +1,4 @@
+interface:
+  display_name: "GlyphQuest Theme Assets"
+  short_description: "Create robust GlyphQuest game UI theme assets."
+  default_prompt: "Use $glyphquest-theme-assets to create or revise a GlyphQuest theme."

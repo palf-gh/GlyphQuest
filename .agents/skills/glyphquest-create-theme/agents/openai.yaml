@@ -1,0 +1,4 @@
+interface:
+  display_name: "GlyphQuest Create Theme"
+  short_description: "Add a new GlyphQuest theme end-to-end (YAML, PNGs, compile)."
+  default_prompt: "Use $glyphquest-create-theme to add a new GlyphQuest theme."

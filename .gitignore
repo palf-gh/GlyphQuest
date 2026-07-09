@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+DerivedData/
+
+# Build intermediates (release bundle lives in release/)
+build/
+*.dSYM/
+
+# Temporary files
+*.tmp
+*.bak
+*.log

@@ -1,0 +1,98 @@
+{
+  "id": "y2k",
+  "names": {
+    "en": "Y2K Pop",
+    "ja": "Y2Kポップ",
+    "zh": "Y2K 流行",
+    "ko": "Y2K 팝"
+  },
+  "percent_font": "Nunito-ExtraBold",
+  "card": {
+    "left_cap": 185,
+    "right_cap": 140,
+    "title_leading": 56
+  },
+  "colours": {
+    "title": "#294F8F",
+    "progress_title": "#33549E",
+    "percent": "#29478A",
+    "count": "#C42694",
+    "toggle_text": "#FFFFFF",
+    "toggle_shadow": "#3B146B61",
+    "settings_text": "#FFFFFF",
+    "row_text": "#304F8F",
+    "row_percent": "#BD2494",
+    "row_top": "#E6FAFFF5",
+    "row_bottom": "#CCE3FFF5",
+    "row_stroke": "#9E85F099",
+    "row_accent": "#F547B2F2"
+  },
+  "progress": {
+    "shape": {
+      "bezel_radius": "auto",
+      "track_radius": "auto",
+      "fill_radius": "auto",
+      "gloss_radius": "auto"
+    },
+    "fill_mode": "continuous",
+    "bezel": {
+      "top": "#F5FAFF",
+      "bottom": "#B885FA",
+      "stroke": "#5C8CE0E0"
+    },
+    "track": {
+      "top": "#E0FAFF",
+      "bottom": "#ADE0FF",
+      "stroke": "#758CDB7A"
+    },
+    "rim": "#FFFFFFC7",
+    "shadow": "#4C2B943D",
+    "fill": [
+      "#1AB8F5",
+      "#61E8FF",
+      "#F05CCC"
+    ],
+    "near_fill": [
+      "#FA42AD",
+      "#B84CFA",
+      "#6BD1FF"
+    ],
+    "complete_fill": [
+      "#FFD657",
+      "#FF6BC2",
+      "#85EBFF"
+    ],
+    "fill_stroke": "#338AD1D6",
+    "near_fill_stroke": "#C733A8DB",
+    "complete_fill_stroke": "#E88A38E6",
+    "track_layers": [
+      {
+        "kind": "shapes",
+        "shape": "star",
+        "spacing": 24,
+        "size": 2.4,
+        "size_alt": 1.5,
+        "colour": "#FFFFFF6B",
+        "offset_x": 11,
+        "y": "mid"
+      }
+    ],
+    "fill_layers": [
+      {
+        "kind": "shapes",
+        "shape": "star",
+        "spacing": 16,
+        "size": 2.7,
+        "size_alt": 1.7,
+        "colour": "#FFFFFF75",
+        "offset_x": 8,
+        "y": "mid"
+      }
+    ],
+    "gloss": {
+      "enabled": true,
+      "colour": "#FFFFFF",
+      "alpha": 0.2
+    }
+  }
+}

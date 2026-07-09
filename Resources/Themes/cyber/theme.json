@@ -1,0 +1,100 @@
+{
+  "id": "cyber",
+  "names": {
+    "en": "Cyber Neon",
+    "ja": "サイバーネオン",
+    "zh": "赛博霓虹",
+    "ko": "사이버 네온"
+  },
+  "percent_font": "Orbitron-Black",
+  "card": {
+    "left_cap": 205,
+    "right_cap": 128,
+    "title_leading": 56
+  },
+  "colours": {
+    "title": "#C7FAFF",
+    "progress_title": "#5CE8FF",
+    "percent": "#F0FAFF",
+    "count": "#5EEBFF",
+    "toggle_text": "#FFFFFF",
+    "toggle_shadow": "#000D24E6",
+    "settings_text": "#E0FFFF",
+    "row_text": "#E0F5FF",
+    "row_percent": "#61F0FF",
+    "row_top": "#122445ED",
+    "row_bottom": "#081229ED",
+    "row_stroke": "#59EBFFB8",
+    "row_accent": "#FF33D9F2"
+  },
+  "progress": {
+    "shape": {
+      "bezel_radius": 3,
+      "track_radius": 1.5,
+      "fill_radius": 1,
+      "gloss_radius": 0.5,
+      "bezel_radius_small": 1.5,
+      "track_radius_small": 0.75,
+      "fill_radius_small": 0.5,
+      "gloss_radius_small": 0.5
+    },
+    "fill_mode": "continuous",
+    "bezel": {
+      "top": "#47EBFF",
+      "bottom": "#8021F0",
+      "stroke": "#9EF5FFF2"
+    },
+    "track": {
+      "top": "#081224",
+      "bottom": "#1A2647",
+      "stroke": "#4FD6FF8C"
+    },
+    "rim": "#D1FAFFB2",
+    "shadow": "#00001A75",
+    "fill": [
+      "#007AFF",
+      "#00EBFF",
+      "#F22EFF"
+    ],
+    "near_fill": [
+      "#852EFF",
+      "#FF33DB",
+      "#FFB833"
+    ],
+    "complete_fill": [
+      "#EBF7FF",
+      "#2EF5FF",
+      "#FF33DB"
+    ],
+    "fill_stroke": "#40DEFFE6",
+    "near_fill_stroke": "#FF66E0E6",
+    "complete_fill_stroke": "#E0FAFFF2",
+    "track_layers": [
+      {
+        "kind": "lines",
+        "angle": 90,
+        "spacing": 14,
+        "thickness": 0.75,
+        "colour": "#47F0FF40",
+        "inset": 2,
+        "offset_x": 8
+      }
+    ],
+    "fill_layers": [
+      {
+        "kind": "shapes",
+        "shape": "rect",
+        "spacing": 9,
+        "width": 4,
+        "inset_y": 2,
+        "colour": "#EBFFFF61",
+        "offset_x": 4
+      }
+    ],
+    "gloss": {
+      "enabled": true,
+      "colour": "#FFFFFF",
+      "alpha": 0.22
+    }
+  }
+}

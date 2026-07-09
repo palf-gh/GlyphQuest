@@ -1,0 +1,344 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8D8F90012E1F000100000001 /* GlyphQuestPalette.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8F90022E1F000100000001 /* GlyphQuestPalette.m */; };
+		8D8F90032E1F000100000001 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D8F90042E1F000100000001 /* Cocoa.framework */; };
+		8D8F90052E1F000100000001 /* GlyphsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D8F90062E1F000100000001 /* GlyphsCore.framework */; };
+		8D8F901E2E1F000100000001 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D8F901F2E1F000100000001 /* CoreText.framework */; };
+		8D8F91802E1F000100000001 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 8D8F91812E1F000100000001 /* Fonts */; };
+		8D8F91822E1F000100000001 /* Themes in Resources */ = {isa = PBXBuildFile; fileRef = 8D8F91832E1F000100000001 /* Themes */; };
+		8D8F91842E1F000100000001 /* GQThemeLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8F91852E1F000100000001 /* GQThemeLoader.m */; };
+		8D8F91862E1F000100000001 /* GQProgressRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8F91872E1F000100000001 /* GQProgressRenderer.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8D8F90022E1F000100000001 /* GlyphQuestPalette.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GlyphQuestPalette.m; sourceTree = "<group>"; };
+		8D8F90042E1F000100000001 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		8D8F90062E1F000100000001 /* GlyphsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GlyphsCore.framework; path = "/Applications/Glyphs 3.app/Contents/Frameworks/GlyphsCore.framework"; sourceTree = "<absolute>"; };
+		8D8F90072E1F000100000001 /* GlyphQuest.glyphsPalette */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlyphQuest.glyphsPalette; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D8F90082E1F000100000001 /* GlyphQuestPalette.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlyphQuestPalette.h; sourceTree = "<group>"; };
+		8D8F90092E1F000100000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D8F900A2E1F000100000001 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		8D8F901F2E1F000100000001 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		8D8F91812E1F000100000001 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
+		8D8F91832E1F000100000001 /* Themes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Themes; sourceTree = "<group>"; };
+		8D8F91852E1F000100000001 /* GQThemeLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GQThemeLoader.m; sourceTree = "<group>"; };
+		8D8F91872E1F000100000001 /* GQProgressRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GQProgressRenderer.m; sourceTree = "<group>"; };
+		8D8F91882E1F000100000001 /* GQThemeSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GQThemeSpec.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D8F900B2E1F000100000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D8F90052E1F000100000001 /* GlyphsCore.framework in Frameworks */,
+				8D8F901E2E1F000100000001 /* CoreText.framework in Frameworks */,
+				8D8F90032E1F000100000001 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8D8F900C2E1F000100000001 = {
+			isa = PBXGroup;
+			children = (
+				8D8F900A2E1F000100000001 /* README.md */,
+				8D8F90082E1F000100000001 /* GlyphQuestPalette.h */,
+				8D8F90022E1F000100000001 /* GlyphQuestPalette.m */,
+				8D8F91882E1F000100000001 /* GQThemeSpec.h */,
+				8D8F91852E1F000100000001 /* GQThemeLoader.m */,
+				8D8F91872E1F000100000001 /* GQProgressRenderer.m */,
+				8D8F90092E1F000100000001 /* Info.plist */,
+				8D8F91892E1F000100000001 /* Resources */,
+				8D8F900E2E1F000100000001 /* Frameworks */,
+				8D8F900F2E1F000100000001 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8D8F91892E1F000100000001 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8D8F91812E1F000100000001 /* Fonts */,
+				8D8F91832E1F000100000001 /* Themes */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		8D8F900E2E1F000100000001 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8D8F90062E1F000100000001 /* GlyphsCore.framework */,
+				8D8F901F2E1F000100000001 /* CoreText.framework */,
+				8D8F90042E1F000100000001 /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8D8F900F2E1F000100000001 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D8F90072E1F000100000001 /* GlyphQuest.glyphsPalette */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D8F90102E1F000100000001 /* GlyphQuest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8D8F90112E1F000100000001 /* Build configuration list for PBXNativeTarget "GlyphQuest" */;
+			buildPhases = (
+				8D8F918A2E1F000100000001 /* Compile Themes */,
+				8D8F90122E1F000100000001 /* Sources */,
+				8D8F900B2E1F000100000001 /* Frameworks */,
+				8D8F90132E1F000100000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GlyphQuest;
+			packageProductDependencies = (
+			);
+			productName = GlyphQuest;
+			productReference = 8D8F90072E1F000100000001 /* GlyphQuest.glyphsPalette */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8D8F90142E1F000100000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1700;
+				TargetAttributes = {
+					8D8F90102E1F000100000001 = {
+						CreatedOnToolsVersion = 17.0;
+					};
+				};
+			};
+			buildConfigurationList = 8D8F90152E1F000100000001 /* Build configuration list for PBXProject "GlyphQuest" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8D8F900C2E1F000100000001;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 8D8F900F2E1F000100000001 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8D8F90102E1F000100000001 /* GlyphQuest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D8F90132E1F000100000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D8F91802E1F000100000001 /* Fonts in Resources */,
+				8D8F91822E1F000100000001 /* Themes in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8D8F918A2E1F000100000001 /* Compile Themes */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/scripts/compile_themes.py",
+				"$(SRCROOT)/Resources/Themes",
+			);
+			name = "Compile Themes";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 \"${SRCROOT}/scripts/compile_themes.py\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D8F90122E1F000100000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D8F90012E1F000100000001 /* GlyphQuestPalette.m in Sources */,
+				8D8F91842E1F000100000001 /* GQThemeLoader.m in Sources */,
+				8D8F91862E1F000100000001 /* GQProgressRenderer.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8D8F90162E1F000100000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_C_LANGUAGE_STANDARD = gnu17;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		8D8F90172E1F000100000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_C_LANGUAGE_STANDARD = gnu17;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		8D8F90182E1F000100000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "\"/Applications/Glyphs 3.app/Contents/Frameworks\"";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = /;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.palf.GlyphQuestPalette;
+				PRODUCT_BUNDLE_PACKAGE_TYPE = BNDL;
+				PRODUCT_NAME = GlyphQuest;
+				SKIP_INSTALL = NO;
+				WRAPPER_EXTENSION = glyphsPalette;
+			};
+			name = Debug;
+		};
+		8D8F90192E1F000100000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "\"/Applications/Glyphs 3.app/Contents/Frameworks\"";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = /;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.palf.GlyphQuestPalette;
+				PRODUCT_BUNDLE_PACKAGE_TYPE = BNDL;
+				PRODUCT_NAME = GlyphQuest;
+				SKIP_INSTALL = NO;
+				WRAPPER_EXTENSION = glyphsPalette;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8D8F90112E1F000100000001 /* Build configuration list for PBXNativeTarget "GlyphQuest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D8F90182E1F000100000001 /* Debug */,
+				8D8F90192E1F000100000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8D8F90152E1F000100000001 /* Build configuration list for PBXProject "GlyphQuest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D8F90162E1F000100000001 /* Debug */,
+				8D8F90172E1F000100000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8D8F90142E1F000100000001 /* Project object */;
+}
