@@ -54,7 +54,6 @@ static void GQClearBitmapRep(NSBitmapImageRep *representation) {
 	(void)dirtyRect;
 
 	const CGFloat columns = 3.0;
-	const CGFloat shadowInset = 4.0;
 
 	[[NSColor colorWithCalibratedRed:248.0 / 255.0 green:246.0 / 255.0 blue:242.0 / 255.0 alpha:1.0] setFill];
 	NSRectFill(self.bounds);
@@ -70,11 +69,6 @@ static void GQClearBitmapRep(NSBitmapImageRep *representation) {
 		NSUInteger row = index / (NSUInteger)columns;
 		CGFloat x = GQGalleryPadding + (CGFloat)column * (GQSamplePanelWidth + GQGalleryGapX);
 		CGFloat y = GQGalleryPadding + (CGFloat)row * (GQSamplePanelHeight + GQGalleryLabelHeight + GQGalleryGapY);
-
-		NSRect shadowRect = NSMakeRect(x - shadowInset, y - shadowInset * 0.5, GQSamplePanelWidth + shadowInset * 2.0, GQSamplePanelHeight + shadowInset * 2.0);
-		NSBezierPath *shadowPath = [NSBezierPath bezierPathWithRoundedRect:shadowRect xRadius:10.0 yRadius:10.0];
-		[[NSColor colorWithCalibratedWhite:0.0 alpha:0.16] setFill];
-		[shadowPath fill];
 
 		NSImage *panel = self.panels[index];
 		[panel drawInRect:NSMakeRect(x, y, GQSamplePanelWidth, GQSamplePanelHeight)
