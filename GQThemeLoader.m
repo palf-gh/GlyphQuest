@@ -211,6 +211,21 @@ static GQThemeSpec *GQThemeFromDictionary(NSDictionary *dictionary, NSString *th
 	return theme;
 }
 
+static NSBundle *GQThemeResourceBundle(void) {
+	static NSBundle *bundle;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		NSString *bundlePath = [NSProcessInfo processInfo].environment[@"GLYPHQUEST_RESOURCE_BUNDLE"];
+		if (bundlePath.length > 0) {
+			bundle = [NSBundle bundleWithPath:bundlePath];
+		}
+		if (!bundle) {
+			bundle = [NSBundle bundleForClass:[GQThemeSpec class]];
+		}
+	});
+	return bundle;
+}
+
 static NSArray<NSString *> *GQDiscoveredThemeIDs(NSBundle *bundle) {
 	NSString *themesPath = [[bundle resourcePath] stringByAppendingPathComponent:@"Themes"];
 	NSArray<NSString *> *entries = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:themesPath error:nil];
@@ -235,7 +250,7 @@ NSArray<GQThemeSpec *> *GQThemeRegistry(void) {
 	static NSArray<GQThemeSpec *> *themes;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		NSBundle *bundle = [NSBundle bundleForClass:[GQThemeSpec class]];
+		NSBundle *bundle = GQThemeResourceBundle();
 		NSMutableArray<GQThemeSpec *> *loadedThemes = [NSMutableArray array];
 		for (NSString *themeID in GQDiscoveredThemeIDs(bundle)) {
 			NSURL *jsonURL = [bundle URLForResource:@"theme" withExtension:@"json" subdirectory:[NSString stringWithFormat:@"Themes/%@", themeID]];

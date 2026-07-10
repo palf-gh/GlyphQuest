@@ -20,3 +20,7 @@ Resources/Themes/**/theme.json
 *.tmp
 *.bak
 *.log
+
+# Python
+__pycache__/
+*.py[cod]

@@ -14,6 +14,7 @@
 		8D8F91802E1F000100000001 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 8D8F91812E1F000100000001 /* Fonts */; };
 		8D8F91842E1F000100000001 /* GQThemeLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8F91852E1F000100000001 /* GQThemeLoader.m */; };
 		8D8F91862E1F000100000001 /* GQProgressRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8F91872E1F000100000001 /* GQProgressRenderer.m */; };
+		8D8F918C2E1F000100000001 /* GQPalettePanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8F918D2E1F000100000001 /* GQPalettePanel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,8 @@
 		8D8F91852E1F000100000001 /* GQThemeLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GQThemeLoader.m; sourceTree = "<group>"; };
 		8D8F91872E1F000100000001 /* GQProgressRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GQProgressRenderer.m; sourceTree = "<group>"; };
 		8D8F91882E1F000100000001 /* GQThemeSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GQThemeSpec.h; sourceTree = "<group>"; };
+		8D8F918D2E1F000100000001 /* GQPalettePanel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GQPalettePanel.m; sourceTree = "<group>"; };
+		8D8F918E2E1F000100000001 /* GQPalettePanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GQPalettePanel.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +55,8 @@
 				8D8F900A2E1F000100000001 /* README.md */,
 				8D8F90082E1F000100000001 /* GlyphQuestPalette.h */,
 				8D8F90022E1F000100000001 /* GlyphQuestPalette.m */,
+				8D8F918E2E1F000100000001 /* GQPalettePanel.h */,
+				8D8F918D2E1F000100000001 /* GQPalettePanel.m */,
 				8D8F91882E1F000100000001 /* GQThemeSpec.h */,
 				8D8F91852E1F000100000001 /* GQThemeLoader.m */,
 				8D8F91872E1F000100000001 /* GQProgressRenderer.m */,
@@ -183,6 +188,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D8F90012E1F000100000001 /* GlyphQuestPalette.m in Sources */,
+				8D8F918C2E1F000100000001 /* GQPalettePanel.m in Sources */,
 				8D8F91842E1F000100000001 /* GQThemeLoader.m in Sources */,
 				8D8F91862E1F000100000001 /* GQProgressRenderer.m in Sources */,
 			);
