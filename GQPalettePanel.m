@@ -86,6 +86,9 @@ void GQRegisterBundledFonts(NSBundle *bundle) {
 }
 
 static NSFont *GQFontNamed(NSString *fontName, CGFloat size) {
+	if (fontName.length == 0 || [fontName isEqualToString:@"system"]) {
+		return [NSFont systemFontOfSize:size weight:NSFontWeightBold];
+	}
 	NSFont *font = [NSFont fontWithName:fontName size:size];
 	if (!font) {
 		font = [NSFont fontWithName:[fontName stringByReplacingOccurrencesOfString:@"-" withString:@" "] size:size];
@@ -488,6 +491,11 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 
 - (void)setTheme:(GQThemeSpec *)theme {
 	_theme = theme ?: GQThemeForIdentifier(nil);
+	self.bordered = NO;
+	self.buttonType = NSButtonTypeToggle;
+	self.font = [NSFont systemFontOfSize:10.5 weight:NSFontWeightBold];
+	[[self cell] setHighlightsBy:NSNoCellMask];
+	[[self cell] setShowsStateBy:NSNoCellMask];
 	self.needsDisplay = YES;
 }
 
@@ -581,6 +589,13 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 
 - (void)setTheme:(GQThemeSpec *)theme {
 	_theme = theme ?: GQThemeForIdentifier(nil);
+	self.bordered = NO;
+	self.buttonType = NSButtonTypeMomentaryChange;
+	self.image = nil;
+	self.title = @"";
+	self.imagePosition = NSNoImage;
+	[[self cell] setHighlightsBy:NSNoCellMask];
+	[[self cell] setShowsStateBy:NSNoCellMask];
 	self.needsDisplay = YES;
 }
 
@@ -589,6 +604,7 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 	GQThemeSpec *theme = self.theme ?: GQThemeForIdentifier(nil);
 	NSRect bounds = NSInsetRect(self.bounds, 0.75, 0.75);
 	NSBezierPath *body = [NSBezierPath bezierPathWithRoundedRect:bounds xRadius:5.5 yRadius:5.5];
+
 	NSShadow *shadow = [[NSShadow alloc] init];
 	shadow.shadowColor = theme.progressShadowColor ?: GQColor(0.0, 0.0, 0.0, 0.25);
 	shadow.shadowBlurRadius = 1.8;
@@ -815,8 +831,8 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 @property (nonatomic, strong) NSTextField *progressLabel;
 @property (nonatomic, strong) GQPercentLabel *percentLabel;
 @property (nonatomic, strong) NSTextField *countLabel;
-@property (nonatomic, strong) GQToggleButton *toggleButton;
-@property (nonatomic, strong) GQSettingsButton *gearButton;
+@property (nonatomic, strong) NSButton *toggleButton;
+@property (nonatomic, strong) NSButton *gearButton;
 @property (nonatomic, strong) GQProgressView *overallProgressBar;
 @property (nonatomic, strong) NSScrollView *scriptScrollView;
 @property (nonatomic, strong) GQScriptListView *scriptContentView;
@@ -835,6 +851,106 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 	return self.gearButton;
 }
 
+static void GQConfigureSystemToggleButton(NSButton *button, NSString *title) {
+	button.bordered = YES;
+	button.bezelStyle = NSBezelStyleRounded;
+	button.controlSize = NSControlSizeRegular;
+	button.buttonType = NSButtonTypePushOnPushOff;
+	button.font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeRegular]];
+	button.alignment = NSTextAlignmentCenter;
+	button.lineBreakMode = NSLineBreakByTruncatingTail;
+	button.image = nil;
+	button.imagePosition = NSNoImage;
+	button.title = title ?: @"";
+}
+
+static void GQConfigureSystemSettingsButton(NSButton *button, NSString *toolTip) {
+	button.bordered = YES;
+	// Rounded push buttons ignore square frames and draw a tiny intrinsic bezel.
+	// FlexiblePush fills the laid-out frame so the live UI matches the sample size.
+	if (@available(macOS 14.0, *)) {
+		button.bezelStyle = NSBezelStyleFlexiblePush;
+	} else {
+		button.bezelStyle = NSBezelStyleShadowlessSquare;
+	}
+	button.controlSize = NSControlSizeRegular;
+	button.buttonType = NSButtonTypeMomentaryPushIn;
+	button.toolTip = toolTip;
+	button.title = @"";
+	button.imagePosition = NSImageOnly;
+	// Bezel padding shrinks the content area; allow the symbol to grow into the frame.
+	button.imageScaling = NSImageScaleProportionallyUpOrDown;
+	NSImage *gear = [NSImage imageWithSystemSymbolName:@"gearshape" accessibilityDescription:toolTip];
+	if (gear) {
+		NSImageSymbolConfiguration *configuration = [NSImageSymbolConfiguration configurationWithPointSize:18.0
+																									weight:NSFontWeightMedium
+																									 scale:NSImageSymbolScaleLarge];
+		NSImage *configured = [gear imageWithSymbolConfiguration:configuration] ?: gear;
+		configured.template = YES;
+		configured.size = NSMakeSize(18.0, 18.0);
+		button.image = configured;
+	} else {
+		button.image = nil;
+		button.title = @"⚙︎";
+		button.imagePosition = NSNoImage;
+	}
+}
+
+- (void)replaceToggleButtonForTheme:(GQThemeSpec *)theme {
+	NSButton *old = self.toggleButton;
+	NSControlStateValue state = old ? old.state : NSControlStateValueOff;
+	NSString *title = old.title.length > 0
+		? old.title
+		: GQLocalized(@"Scripts", @"文字体系別", @"文字体系", @"문자 체계별");
+	id target = old.target ?: self.target;
+	SEL action = old.action ?: @selector(modeChanged:);
+	NSRect frame = old ? old.frame : NSZeroRect;
+
+	NSButton *button = theme.usesNativeAppearance
+		? [[NSButton alloc] initWithFrame:frame]
+		: [[GQToggleButton alloc] initWithFrame:frame];
+	button.title = title;
+	button.target = target;
+	button.action = action;
+	button.state = state;
+	if ([button isKindOfClass:[GQToggleButton class]]) {
+		GQToggleButton *themed = (GQToggleButton *)button;
+		themed.theme = theme;
+		themed.resourceBundle = self.resourceBundle;
+		themed.captureCompositing = self.captureCompositing;
+	} else {
+		GQConfigureSystemToggleButton(button, title);
+	}
+	[old removeFromSuperview];
+	self.toggleButton = button;
+	[self addSubview:button];
+}
+
+- (void)replaceGearButtonForTheme:(GQThemeSpec *)theme {
+	NSButton *old = self.gearButton;
+	id target = old.target ?: self.target;
+	SEL action = old.action ?: @selector(showThemePopover:);
+	NSString *toolTip = old.toolTip.length > 0
+		? old.toolTip
+		: GQLocalized(@"Theme", @"テーマ", @"主题", @"테마");
+	NSRect frame = old ? old.frame : NSZeroRect;
+
+	NSButton *button = theme.usesNativeAppearance
+		? [[NSButton alloc] initWithFrame:frame]
+		: [[GQSettingsButton alloc] initWithFrame:frame];
+	button.target = target;
+	button.action = action;
+	button.toolTip = toolTip;
+	if ([button isKindOfClass:[GQSettingsButton class]]) {
+		((GQSettingsButton *)button).theme = theme;
+	} else {
+		GQConfigureSystemSettingsButton(button, toolTip);
+	}
+	[old removeFromSuperview];
+	self.gearButton = button;
+	[self addSubview:button];
+}
+
 - (instancetype)initWithFrame:(NSRect)frameRect {
 	self = [super initWithFrame:frameRect];
 	if (self) {
@@ -846,12 +962,23 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 	return self;
 }
 
+- (void)viewDidChangeEffectiveAppearance {
+	[super viewDidChangeEffectiveAppearance];
+	if (!self.theme.usesNativeAppearance) {
+		return;
+	}
+	[self.effectiveAppearance performAsCurrentDrawingAppearance:^{
+		GQRefreshNativeThemeAppearance(self.theme);
+		[self applyTheme:self.theme];
+	}];
+}
+
 - (BOOL)isFlipped {
 	return YES;
 }
 
 - (BOOL)isOpaque {
-	return YES;
+	return !self.theme.usesNativeAppearance;
 }
 
 - (BOOL)allowsVibrancy {
@@ -864,8 +991,10 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 
 - (void)setCaptureCompositing:(BOOL)captureCompositing {
 	_captureCompositing = captureCompositing;
-	self.toggleButton.captureCompositing = captureCompositing;
-	self.toggleButton.needsDisplay = YES;
+	if ([self.toggleButton isKindOfClass:[GQToggleButton class]]) {
+		((GQToggleButton *)self.toggleButton).captureCompositing = captureCompositing;
+		self.toggleButton.needsDisplay = YES;
+	}
 }
 
 - (void)setResourceBundle:(NSBundle *)resourceBundle {
@@ -874,7 +1003,9 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 	for (GQScriptRowView *row in self.scriptRows) {
 		row.resourceBundle = resourceBundle;
 	}
-	self.toggleButton.resourceBundle = resourceBundle;
+	if ([self.toggleButton isKindOfClass:[GQToggleButton class]]) {
+		((GQToggleButton *)self.toggleButton).resourceBundle = resourceBundle;
+	}
 	self.needsDisplay = YES;
 }
 
@@ -921,20 +1052,10 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 	self.overallProgressBar.theme = theme;
 	self.overallProgressBar.resourceBundle = self.resourceBundle;
 
-	self.toggleButton = [[GQToggleButton alloc] initWithFrame:NSZeroRect];
-	self.toggleButton.title = GQLocalized(@"Scripts", @"文字体系別", @"文字体系", @"문자 체계별");
-	self.toggleButton.target = self.target;
-	self.toggleButton.action = @selector(modeChanged:);
-	self.toggleButton.state = NSControlStateValueOff;
-	self.toggleButton.theme = theme;
-	self.toggleButton.resourceBundle = self.resourceBundle;
-	self.toggleButton.captureCompositing = self.captureCompositing;
-
-	self.gearButton = [[GQSettingsButton alloc] initWithFrame:NSZeroRect];
-	self.gearButton.target = self.target;
-	self.gearButton.action = @selector(showThemePopover:);
-	self.gearButton.toolTip = GQLocalized(@"Theme", @"テーマ", @"主题", @"테마");
-	self.gearButton.theme = theme;
+	self.toggleButton = nil;
+	self.gearButton = nil;
+	[self replaceToggleButtonForTheme:theme];
+	[self replaceGearButtonForTheme:theme];
 
 	self.scriptContentView = [[GQScriptListView alloc] initWithFrame:NSZeroRect];
 	self.scriptScrollView = [[NSScrollView alloc] initWithFrame:NSZeroRect];
@@ -964,8 +1085,7 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 
 	// Keep the controls above the list, including when the script scroll view is visible.
 	// NSButton's built-in tracking covers the complete bounds, even where the artwork is transparent.
-	[self addSubview:self.toggleButton];
-	[self addSubview:self.gearButton];
+	// toggle / gear are already added by replace* helpers.
 
 	[self applyTheme:theme];
 	[self layoutPanel];
@@ -979,8 +1099,22 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 	self.percentLabel.font = GQFontNamed(theme.percentFontName, 38.0);
 	self.percentLabel.textColor = theme.percentColor;
 	self.countLabel.textColor = theme.countColor;
-	self.toggleButton.theme = theme;
-	self.gearButton.theme = theme;
+
+	BOOL toggleIsSystem = ![self.toggleButton isKindOfClass:[GQToggleButton class]];
+	BOOL gearIsSystem = ![self.gearButton isKindOfClass:[GQSettingsButton class]];
+	if (theme.usesNativeAppearance != toggleIsSystem || theme.usesNativeAppearance != gearIsSystem) {
+		[self replaceToggleButtonForTheme:theme];
+		[self replaceGearButtonForTheme:theme];
+	} else if (theme.usesNativeAppearance) {
+		GQConfigureSystemToggleButton(self.toggleButton, self.toggleButton.title);
+		GQConfigureSystemSettingsButton(self.gearButton, self.gearButton.toolTip);
+	} else {
+		((GQToggleButton *)self.toggleButton).theme = theme;
+		((GQToggleButton *)self.toggleButton).resourceBundle = self.resourceBundle;
+		((GQToggleButton *)self.toggleButton).captureCompositing = self.captureCompositing;
+		((GQSettingsButton *)self.gearButton).theme = theme;
+	}
+
 	self.overallProgressBar.theme = theme;
 	for (GQScriptRowView *row in self.scriptRows) {
 		row.theme = theme;
@@ -990,6 +1124,8 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 	self.gearButton.needsDisplay = YES;
 	self.overallProgressBar.needsDisplay = YES;
 	self.scriptContentView.needsDisplay = YES;
+	[self setNeedsLayout:YES];
+	[self layoutPanel];
 }
 
 - (void)layout {
@@ -1006,16 +1142,23 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 
 	CGFloat width = NSWidth(self.bounds) > 1.0 ? NSWidth(self.bounds) : GQPaletteWidth;
 	CGFloat margin = 14.0;
-	CGFloat toggleWidth = 94.0;
 	CGFloat settingsSize = 26.0;
 	CGFloat contentInset = fmin(42.0, fmax(30.0, width * 0.07));
 	CGFloat offsetX = GQCardMarginH;
 	CGFloat offsetY = GQCardMarginV;
 	GQThemeSpec *theme = self.theme ?: GQThemeForIdentifier(nil);
 	CGFloat titleLeading = theme.titleLeading > 0.0 ? theme.titleLeading : 56.0;
+	// Keep the same card content inset even when System draws no card artwork.
+	CGFloat toggleWidth = theme.usesNativeAppearance ? 112.0 : 94.0;
+	CGFloat toggleHeight = theme.usesNativeAppearance ? 28.0 : 25.0;
+	CGFloat toggleY = theme.usesNativeAppearance ? 11.0 : 13.0;
+	if (theme.usesNativeAppearance) {
+		// Match the themed gear hit target; FlexiblePush fills this square.
+		settingsSize = 28.0;
+	}
 
 	self.titleLabel.frame = NSMakeRect(offsetX + titleLeading, offsetY + 17.0, fmax(0.0, width - offsetX - titleLeading - toggleWidth - 24.0 - offsetX), 18.0);
-	self.toggleButton.frame = NSMakeRect(width - offsetX - margin - toggleWidth, offsetY + 13.0, toggleWidth, 25.0);
+	self.toggleButton.frame = NSMakeRect(width - offsetX - margin - toggleWidth, offsetY + toggleY, toggleWidth, toggleHeight);
 	self.gearButton.frame = NSMakeRect(fmax(offsetX + margin, width - offsetX - settingsSize - 9.0), GQPaletteHeight - offsetY - settingsSize - 9.0, settingsSize, settingsSize);
 
 	self.progressLabel.frame = NSMakeRect(offsetX + margin, offsetY, width - (offsetX + margin) * 2.0, 0.0);
@@ -1138,6 +1281,19 @@ static NSString *GQFormatScoreSum(CGFloat scoreSum) {
 				GQDrawHorizontallyResizableImage(cardImage, GQCardFrame(bounds), theme.cardLeftCap, theme.cardRightCap);
 			}
 		}
+		return;
+	}
+
+	if (theme.usesNativeAppearance) {
+		// Outline only — no scene fill or card artwork.
+		NSRect cardRect = GQCardFrame(bounds);
+		NSBezierPath *card = [NSBezierPath bezierPathWithRoundedRect:NSInsetRect(cardRect, 0.5, 0.5)
+															 xRadius:10.0
+															 yRadius:10.0];
+		NSColor *stroke = [[NSColor labelColor] colorUsingColorSpace:NSColorSpace.deviceRGBColorSpace] ?: [NSColor labelColor];
+		[[stroke colorWithAlphaComponent:0.22] setStroke];
+		card.lineWidth = 1.0;
+		[card stroke];
 		return;
 	}
 

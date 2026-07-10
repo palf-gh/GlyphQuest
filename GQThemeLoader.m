@@ -87,6 +87,87 @@ static NSColor *GQColorFromObject(id value, NSColor *fallback) {
 	return fallback;
 }
 
+/// Catalog colours must be resolved before NSGradient / offscreen drawing,
+/// otherwise they can flatten to near-black and read as high-contrast.
+static NSColor *GQSolidColour(NSColor *color) {
+	if (!color) {
+		return nil;
+	}
+	NSColor *rgb = [color colorUsingColorSpace:NSColorSpace.deviceRGBColorSpace];
+	return rgb ?: color;
+}
+
+static NSColor *GQTintedLabel(CGFloat alpha) {
+	return GQSolidColour([NSColor.labelColor colorWithAlphaComponent:alpha]);
+}
+
+static NSArray<NSColor *> *GQNativeFillColours(void) {
+	NSColor *accent = GQSolidColour(NSColor.controlAccentColor);
+	NSColor *highlight = GQSolidColour([accent blendedColorWithFraction:0.22 ofColor:NSColor.whiteColor]) ?: accent;
+	return @[accent, highlight];
+}
+
+static void GQApplyNativeAppearanceToTheme(GQThemeSpec *theme) {
+	theme.usesNativeAppearance = YES;
+	theme.percentFontName = @"system";
+	theme.titleLeading = 14.0;
+	theme.cardLeftCap = 0.0;
+	theme.cardRightCap = 0.0;
+	theme.usesTiledCardCenter = NO;
+
+	theme.titleColor = GQSolidColour(NSColor.labelColor);
+	theme.progressTitleColor = GQSolidColour(NSColor.secondaryLabelColor);
+	theme.percentColor = GQSolidColour(NSColor.labelColor);
+	theme.countColor = GQSolidColour(NSColor.secondaryLabelColor);
+	theme.toggleTextColor = GQSolidColour(NSColor.labelColor);
+	theme.toggleShadowColor = [NSColor clearColor];
+	theme.settingsTextColor = GQSolidColour(NSColor.labelColor);
+	theme.rowTextColor = GQSolidColour(NSColor.labelColor);
+	theme.rowPercentColor = GQSolidColour(NSColor.secondaryLabelColor);
+	theme.rowTopColor = GQSolidColour(NSColor.controlBackgroundColor);
+	theme.rowBottomColor = GQSolidColour([NSColor.controlBackgroundColor blendedColorWithFraction:0.06 ofColor:NSColor.blackColor]) ?: GQSolidColour(NSColor.controlBackgroundColor);
+	theme.rowStrokeColor = GQTintedLabel(0.18);
+	theme.rowAccentColor = GQSolidColour(NSColor.controlAccentColor);
+
+	GQProgressStyle *style = theme.progressStyle ?: [[GQProgressStyle alloc] init];
+	if (style.shape.count == 0) {
+		style.shape = @{
+			@"bezel_radius": @6,
+			@"track_radius": @4.5,
+			@"fill_radius": @4.5,
+		};
+	}
+	style.fillMode = style.fillMode.length > 0 ? style.fillMode : @"continuous";
+	style.trackLayers = style.trackLayers ?: @[];
+	style.fillLayers = style.fillLayers ?: @[];
+	style.gloss = @{ @"enabled": @NO };
+
+	// Soft inset track (like a standard progress well), not a dark trench.
+	style.bezelTopColor = GQTintedLabel(0.10);
+	style.bezelBottomColor = GQTintedLabel(0.14);
+	style.bezelStrokeColor = GQTintedLabel(0.20);
+	style.trackTopColor = GQTintedLabel(0.08);
+	style.trackBottomColor = GQTintedLabel(0.12);
+	style.trackStrokeColor = GQTintedLabel(0.14);
+	style.rimColor = [NSColor clearColor];
+	style.shadowColor = [NSColor clearColor];
+	style.fillColors = GQNativeFillColours();
+	NSColor *near = GQSolidColour(NSColor.systemOrangeColor);
+	style.nearFillColors = @[
+		near,
+		GQSolidColour([near blendedColorWithFraction:0.25 ofColor:NSColor.whiteColor]) ?: near,
+	];
+	NSColor *complete = GQSolidColour(NSColor.systemGreenColor);
+	style.completeFillColors = @[
+		complete,
+		GQSolidColour([complete blendedColorWithFraction:0.20 ofColor:NSColor.whiteColor]) ?: complete,
+	];
+	style.fillStrokeColor = [NSColor clearColor];
+	style.nearFillStrokeColor = [NSColor clearColor];
+	style.completeFillStrokeColor = [NSColor clearColor];
+	theme.progressStyle = style;
+}
+
 @implementation GQProgressStyle
 
 - (CGFloat)radiusForKey:(NSString *)key height:(CGFloat)height large:(BOOL)large {
@@ -192,6 +273,13 @@ static GQThemeSpec *GQThemeFromDictionary(NSDictionary *dictionary, NSString *th
 	theme.usesTiledCardCenter = [dictionary[@"uses_tiled_card_center"] boolValue];
 	theme.toggleSourceRect = NSZeroRect;
 
+	NSString *styleName = [dictionary[@"style"] isKindOfClass:[NSString class]] ? dictionary[@"style"] : @"";
+	BOOL systemAppearance = [styleName isEqualToString:@"system"]
+		|| [styleName isEqualToString:@"native"]
+		|| [theme.identifier isEqualToString:@"system"]
+		|| [theme.identifier isEqualToString:@"native"];
+	theme.usesNativeAppearance = systemAppearance;
+
 	NSDictionary *colours = [dictionary[@"colours"] isKindOfClass:[NSDictionary class]] ? dictionary[@"colours"] : @{};
 	theme.titleColor = GQColorFromObject(colours[@"title"], NSColor.labelColor);
 	theme.progressTitleColor = GQColorFromObject(colours[@"progress_title"], theme.titleColor);
@@ -208,6 +296,9 @@ static GQThemeSpec *GQThemeFromDictionary(NSDictionary *dictionary, NSString *th
 	theme.rowAccentColor = GQColorFromObject(colours[@"row_accent"], NSColor.systemGreenColor);
 
 	theme.progressStyle = GQProgressStyleFromDictionary([dictionary[@"progress"] isKindOfClass:[NSDictionary class]] ? dictionary[@"progress"] : @{});
+	if (systemAppearance) {
+		GQApplyNativeAppearanceToTheme(theme);
+	}
 	return theme;
 }
 
@@ -226,23 +317,37 @@ static NSBundle *GQThemeResourceBundle(void) {
 	return bundle;
 }
 
+static NSArray<NSString *> *GQPreferredThemeOrder(void) {
+	return @[@"system", @"forest", @"cyber", @"moonlight", @"candy", @"ocean", @"y2k"];
+}
+
 static NSArray<NSString *> *GQDiscoveredThemeIDs(NSBundle *bundle) {
 	NSString *themesPath = [[bundle resourcePath] stringByAppendingPathComponent:@"Themes"];
 	NSArray<NSString *> *entries = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:themesPath error:nil];
 	if (entries.count == 0) {
-		return @[@"forest", @"cyber", @"moonlight", @"candy", @"ocean", @"y2k"];
+		return GQPreferredThemeOrder();
 	}
-	NSMutableArray<NSString *> *themeIDs = [NSMutableArray array];
-	for (NSString *entry in [entries sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]) {
+	NSMutableSet<NSString *> *discovered = [NSMutableSet set];
+	for (NSString *entry in entries) {
 		BOOL isDirectory = NO;
 		NSString *fullPath = [themesPath stringByAppendingPathComponent:entry];
 		if ([[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:&isDirectory] && isDirectory) {
 			NSString *jsonPath = [fullPath stringByAppendingPathComponent:@"theme.json"];
 			if ([[NSFileManager defaultManager] fileExistsAtPath:jsonPath]) {
-				[themeIDs addObject:entry];
+				[discovered addObject:entry];
 			}
 		}
 	}
+
+	NSMutableArray<NSString *> *themeIDs = [NSMutableArray array];
+	for (NSString *preferredID in GQPreferredThemeOrder()) {
+		if ([discovered containsObject:preferredID]) {
+			[themeIDs addObject:preferredID];
+			[discovered removeObject:preferredID];
+		}
+	}
+	NSArray<NSString *> *extras = [[discovered allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+	[themeIDs addObjectsFromArray:extras];
 	return themeIDs;
 }
 
@@ -276,6 +381,9 @@ NSArray<GQThemeSpec *> *GQThemeRegistry(void) {
 }
 
 GQThemeSpec *GQThemeForIdentifier(NSString *identifier) {
+	if ([identifier isEqualToString:@"native"]) {
+		identifier = @"system";
+	}
 	if (identifier.length > 0) {
 		for (GQThemeSpec *theme in GQThemeRegistry()) {
 			if ([theme.identifier isEqualToString:identifier]) {
@@ -294,4 +402,11 @@ GQThemeSpec *GQThemeForIdentifier(NSString *identifier) {
 GQThemeSpec *GQSavedTheme(void) {
 	NSString *savedID = [[NSUserDefaults standardUserDefaults] stringForKey:GQSelectedThemeDefaultsKey];
 	return GQThemeForIdentifier(savedID);
+}
+
+void GQRefreshNativeThemeAppearance(GQThemeSpec *theme) {
+	if (!theme.usesNativeAppearance) {
+		return;
+	}
+	GQApplyNativeAppearanceToTheme(theme);
 }

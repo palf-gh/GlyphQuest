@@ -11,20 +11,63 @@ static const NSUInteger GQSampleTotalGlyphs = 3347;
 static const CGFloat GQSampleProgress = (746.0 / 3347.0) * 100.0;
 
 static NSArray<NSString *> *GQThemeOrder(void) {
-	return @[@"forest", @"cyber", @"moonlight", @"candy", @"ocean", @"y2k"];
+	return @[@"system-light", @"system-dark", @"forest", @"cyber", @"moonlight", @"candy", @"ocean", @"y2k"];
 }
 
-static NSString *GQLocalizedThemeName(GQThemeSpec *theme, NSString *locale) {
+static NSString *GQThemeIDForOrderEntry(NSString *entry) {
+	if ([entry hasPrefix:@"system-"] || [entry hasPrefix:@"native-"]) {
+		return @"system";
+	}
+	return entry;
+}
+
+static NSAppearance *GQAppearanceForOrderEntry(NSString *entry) {
+	if ([entry isEqualToString:@"system-dark"] || [entry isEqualToString:@"native-dark"]) {
+		return [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+	}
+	if ([entry isEqualToString:@"system-light"] || [entry isEqualToString:@"native-light"]) {
+		return [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+	}
+	return nil;
+}
+
+static NSString *GQLocalizedThemeName(GQThemeSpec *theme, NSString *locale, NSString *orderEntry) {
+	NSString *base = nil;
 	if ([locale isEqualToString:@"ja"]) {
-		return theme.japaneseName;
+		base = theme.japaneseName;
+	} else if ([locale isEqualToString:@"zh"]) {
+		base = theme.chineseName;
+	} else if ([locale isEqualToString:@"ko"]) {
+		base = theme.koreanName;
+	} else {
+		base = theme.englishName;
 	}
-	if ([locale isEqualToString:@"zh"]) {
-		return theme.chineseName;
+
+	if ([orderEntry isEqualToString:@"system-light"] || [orderEntry isEqualToString:@"native-light"]) {
+		if ([locale isEqualToString:@"ja"]) {
+			return [base stringByAppendingString:@" · ライト"];
+		}
+		if ([locale isEqualToString:@"zh"]) {
+			return [base stringByAppendingString:@" · 浅色"];
+		}
+		if ([locale isEqualToString:@"ko"]) {
+			return [base stringByAppendingString:@" · 라이트"];
+		}
+		return [base stringByAppendingString:@" · Light"];
 	}
-	if ([locale isEqualToString:@"ko"]) {
-		return theme.koreanName;
+	if ([orderEntry isEqualToString:@"system-dark"] || [orderEntry isEqualToString:@"native-dark"]) {
+		if ([locale isEqualToString:@"ja"]) {
+			return [base stringByAppendingString:@" · ダーク"];
+		}
+		if ([locale isEqualToString:@"zh"]) {
+			return [base stringByAppendingString:@" · 深色"];
+		}
+		if ([locale isEqualToString:@"ko"]) {
+			return [base stringByAppendingString:@" · 다크"];
+		}
+		return [base stringByAppendingString:@" · Dark"];
 	}
-	return theme.englishName;
+	return base;
 }
 
 static const CGFloat GQGalleryPadding = 56.0;
@@ -53,7 +96,7 @@ static void GQClearBitmapRep(NSBitmapImageRep *representation) {
 - (void)drawRect:(NSRect)dirtyRect {
 	(void)dirtyRect;
 
-	const CGFloat columns = 3.0;
+	const CGFloat columns = 4.0;
 
 	[[NSColor colorWithCalibratedRed:248.0 / 255.0 green:246.0 / 255.0 blue:242.0 / 255.0 alpha:1.0] setFill];
 	NSRectFill(self.bounds);
@@ -87,7 +130,7 @@ static void GQClearBitmapRep(NSBitmapImageRep *representation) {
 
 @end
 
-static NSImage *GQSnapshotView(NSView *view, CGFloat scale) {
+static NSImage *GQSnapshotView(NSView *view, CGFloat scale, NSAppearance *appearance, NSColor *backdropColour) {
 	NSSize size = view.bounds.size;
 	NSRect frame = NSMakeRect(0.0, 0.0, size.width, size.height);
 
@@ -96,18 +139,34 @@ static NSImage *GQSnapshotView(NSView *view, CGFloat scale) {
 													 backing:NSBackingStoreBuffered
 													   defer:NO];
 	window.releasedWhenClosed = NO;
-	window.opaque = NO;
-	window.backgroundColor = NSColor.clearColor;
+	window.opaque = backdropColour != nil;
+	window.backgroundColor = backdropColour ?: NSColor.clearColor;
+	window.alphaValue = 1.0;
+	window.level = NSScreenSaverWindowLevel;
+	[window setFrameOrigin:NSMakePoint(-10000.0, -10000.0)];
+	if (appearance) {
+		window.appearance = appearance;
+	}
 
 	NSView *host = [[NSView alloc] initWithFrame:frame];
-	host.wantsLayer = NO;
+	host.wantsLayer = YES;
+	host.layer.backgroundColor = (backdropColour ?: NSColor.clearColor).CGColor;
+	if (appearance) {
+		host.appearance = appearance;
+	}
 	window.contentView = host;
 	view.frame = frame;
 	view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+	if (appearance) {
+		view.appearance = appearance;
+	}
 	[host addSubview:view];
 
 	[view layoutSubtreeIfNeeded];
+	[window layoutIfNeeded];
+	[window orderFrontRegardless];
 	[window displayIfNeeded];
+	[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 
 	NSBitmapImageRep *representation = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
 																			  pixelsWide:(NSInteger)ceil(size.width * scale)
@@ -121,7 +180,18 @@ static NSImage *GQSnapshotView(NSView *view, CGFloat scale) {
 																		   bitsPerPixel:0];
 	representation.size = size;
 	GQClearBitmapRep(representation);
-	[view cacheDisplayInRect:view.bounds toBitmapImageRep:representation];
+	[NSGraphicsContext saveGraphicsState];
+	NSGraphicsContext *context = [NSGraphicsContext graphicsContextWithBitmapImageRep:representation];
+	[NSGraphicsContext setCurrentContext:context];
+	context.imageInterpolation = NSImageInterpolationHigh;
+	if (backdropColour) {
+		[backdropColour setFill];
+		NSRectFill(NSMakeRect(0.0, 0.0, size.width, size.height));
+	}
+	// Prefer the focused display path so AppKit push buttons draw their real bezel.
+	[view displayRectIgnoringOpacity:view.bounds inContext:context];
+	[NSGraphicsContext restoreGraphicsState];
+	[window orderOut:nil];
 
 	NSImage *image = [[NSImage alloc] initWithSize:size];
 	[image addRepresentation:representation];
@@ -129,7 +199,7 @@ static NSImage *GQSnapshotView(NSView *view, CGFloat scale) {
 }
 
 static NSImage *GQCompositeGallery(NSArray<NSImage *> *panels, NSArray<NSString *> *labels, CGFloat scale) {
-	const CGFloat columns = 3.0;
+	const CGFloat columns = 4.0;
 	const CGFloat rows = 2.0;
 
 	CGFloat galleryWidth = GQGalleryPadding * 2.0 + columns * GQSamplePanelWidth + (columns - 1.0) * GQGalleryGapX;
@@ -138,7 +208,7 @@ static NSImage *GQCompositeGallery(NSArray<NSImage *> *panels, NSArray<NSString 
 	GQGalleryCompositorView *compositor = [[GQGalleryCompositorView alloc] initWithFrame:NSMakeRect(0.0, 0.0, galleryWidth, galleryHeight)];
 	compositor.panels = panels;
 	compositor.labels = labels;
-	return GQSnapshotView(compositor, scale);
+	return GQSnapshotView(compositor, scale, nil, nil);
 }
 
 static BOOL GQWritePNG(NSImage *image, NSString *path) {
@@ -166,19 +236,38 @@ static NSImage *GQRenderGalleryForLocale(NSString *locale, NSBundle *resourceBun
 	NSMutableArray<NSImage *> *panels = [NSMutableArray array];
 	NSMutableArray<NSString *> *labels = [NSMutableArray array];
 
-	for (NSString *themeID in GQThemeOrder()) {
+	for (NSString *orderEntry in GQThemeOrder()) {
+		NSString *themeID = GQThemeIDForOrderEntry(orderEntry);
 		GQThemeSpec *theme = GQThemeForIdentifier(themeID);
+		NSAppearance *appearance = GQAppearanceForOrderEntry(orderEntry);
+
 		GQPalettePanelView *panel = [[GQPalettePanelView alloc] initWithFrame:NSMakeRect(0.0, 0.0, GQSamplePanelWidth, GQSamplePanelHeight)];
 		panel.resourceBundle = resourceBundle;
 		panel.captureCompositing = YES;
 		panel.theme = theme;
 		[panel buildInterfaceIfNeeded];
-		[panel applyTheme:theme];
-		[panel setOverviewProgress:GQSampleProgress scoreSum:(CGFloat)GQSampleScoreSum totalCount:GQSampleTotalGlyphs];
-		[panel updateModeVisibility];
-		[panel layoutPanel];
-		[panels addObject:GQSnapshotView(panel, scale)];
-		[labels addObject:GQLocalizedThemeName(theme, locale)];
+		void (^configureAndCapture)(void) = ^{
+			if (theme.usesNativeAppearance) {
+				GQRefreshNativeThemeAppearance(theme);
+			}
+			[panel applyTheme:theme];
+			[panel setOverviewProgress:GQSampleProgress scoreSum:(CGFloat)GQSampleScoreSum totalCount:GQSampleTotalGlyphs];
+			[panel updateModeVisibility];
+			[panel layoutPanel];
+			NSColor *backdrop = nil;
+			if (theme.usesNativeAppearance && [orderEntry hasSuffix:@"-dark"]) {
+				// Dark samples need a flat plate; light sits on the gallery cream (no nested card).
+				backdrop = [NSColor colorWithCalibratedWhite:0.18 alpha:1.0];
+			}
+			[panels addObject:GQSnapshotView(panel, scale, appearance, backdrop)];
+			[labels addObject:GQLocalizedThemeName(theme, locale, orderEntry)];
+		};
+		if (appearance) {
+			panel.appearance = appearance;
+			[appearance performAsCurrentDrawingAppearance:configureAndCapture];
+		} else {
+			configureAndCapture();
+		}
 	}
 
 	GQForceLanguageKey(nil);

@@ -48,6 +48,7 @@ extern const CGFloat GQProgressCompleteThreshold;
 @property (nonatomic) BOOL usesTiledCardCenter;
 @property (nonatomic) NSRect toggleSourceRect;
 @property (nonatomic) CGFloat titleLeading;
+@property (nonatomic) BOOL usesNativeAppearance;
 @property (nonatomic, strong) NSColor *titleColor;
 @property (nonatomic, strong) NSColor *progressTitleColor;
 @property (nonatomic, strong) NSColor *percentColor;
@@ -87,6 +88,7 @@ GQProgressStyle *GQProgressStyleFromDictionary(NSDictionary * _Nullable dictiona
 NSArray<GQThemeSpec *> *GQThemeRegistry(void);
 GQThemeSpec *GQThemeForIdentifier(NSString * _Nullable identifier);
 GQThemeSpec *GQSavedTheme(void);
+void GQRefreshNativeThemeAppearance(GQThemeSpec *theme);
 
 @interface GQProgressRenderer : NSObject
 + (void)drawProgressInRect:(NSRect)bounds

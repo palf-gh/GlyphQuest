@@ -1,0 +1,29 @@
+{
+  "id": "system",
+  "style": "system",
+  "names": {
+    "en": "System",
+    "ja": "システム",
+    "zh": "系统",
+    "ko": "시스템"
+  },
+  "percent_font": "system",
+  "card": {
+    "left_cap": 0,
+    "right_cap": 0,
+    "title_leading": 14
+  },
+  "progress": {
+    "shape": {
+      "bezel_radius": 6,
+      "track_radius": 4.5,
+      "fill_radius": 4.5
+    },
+    "fill_mode": "continuous",
+    "track_layers": [],
+    "fill_layers": [],
+    "gloss": {
+      "enabled": false
+    }
+  }
+}

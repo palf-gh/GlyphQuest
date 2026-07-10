@@ -121,6 +121,7 @@
 	GQThemeSpec *theme = self.currentTheme ?: GQThemeForIdentifier(nil);
 	self.currentTheme = theme;
 	[self.panelView applyTheme:theme];
+	[self.panelView layoutPanel];
 }
 
 - (void)showThemePopover:(id)sender {
