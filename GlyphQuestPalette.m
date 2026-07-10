@@ -283,6 +283,34 @@
 	return YES;
 }
 
+/// Spaces, soft hyphens, and format/control separators stay in the total but count as complete.
+- (BOOL)isAutoCompleteGlyph:(GSGlyph *)glyph {
+	NSString *subCategory = glyph.subCategory ?: @"";
+	if ([subCategory isEqualToString:@"Space"]) {
+		return YES;
+	}
+
+	NSString *name = glyph.name ?: @"";
+	if ([name isEqualToString:@"softhyphen"]
+		|| [name hasPrefix:@"softhyphen"]
+		|| [name isEqualToString:@"sfthyphen"]) {
+		return YES;
+	}
+
+	UTF32Char unicode = glyph.unicodeChar;
+	if (unicode == 0x00AD || unicode == 0x1806) {
+		return YES;
+	}
+
+	NSString *category = glyph.category ?: @"";
+	if ([category isEqualToString:@"Separator"]
+		&& ([subCategory isEqualToString:@"Nonspacing"] || [subCategory isEqualToString:@"Format"])) {
+		return YES;
+	}
+
+	return NO;
+}
+
 - (BOOL)layerHasShapesForGlyph:(GSGlyph *)glyph master:(GSFontMaster *)master {
 	GSLayer *layer = [glyph layerForId:master.id];
 	if (!layer) {
@@ -292,6 +320,9 @@
 }
 
 - (CGFloat)glyphScore:(GSGlyph *)glyph masters:(NSArray<GSFontMaster *> *)masters {
+	if ([self isAutoCompleteGlyph:glyph]) {
+		return 1.0;
+	}
 	if (masters.count == 0) {
 		return 0.0;
 	}

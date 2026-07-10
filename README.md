@@ -49,6 +49,12 @@ percent = round(sum(glyph_scores) / eligible_glyph_count * 100, 1)
 
 全マスターに shapes がある Glyph は `1.0`、一部マスターのみの場合は `作成済みマスター数 / 全マスター数` として数えます。
 
+次の Glyph は総数に含めつつ、shapes がなくても常に `1.0`（作成済み）として扱います。
+
+- `subCategory` が `Space`（space / nbspace / emspace など）
+- soft hyphen（`softhyphen` / U+00AD など）
+- 形状不要な Separator（`Nonspacing` / `Format`：ZWJ、ZWNJ、bidi mark など）
+
 ### 開発
 
 リポジトリ構成:
@@ -147,6 +153,12 @@ percent = round(sum(glyph_scores) / eligible_glyph_count * 100, 1)
 ```
 
 所有母版都有 shapes 的字形计为 `1.0`。只有部分母版完成时，按 `已完成母版数 / 母版总数` 计分。
+
+下列字形仍计入总数，但即使没有 shapes 也始终计为 `1.0`（已完成）：
+
+- `subCategory` 为 `Space`（space / nbspace / emspace 等）
+- soft hyphen（`softhyphen` / U+00AD 等）
+- 无需轮廓的 Separator（`Nonspacing` / `Format`：ZWJ、ZWNJ、bidi mark 等）
 
 ### 开发
 
@@ -247,6 +259,12 @@ percent = round(sum(glyph_scores) / eligible_glyph_count * 100, 1)
 
 모든 마스터에 shapes가 있는 글리프는 `1.0`으로 계산합니다. 일부 마스터만 완성된 경우 `완성된 마스터 수 / 전체 마스터 수`로 계산합니다.
 
+다음 글리프는 총수에는 포함하되, shapes가 없어도 항상 `1.0`(작성 완료)으로 취급합니다.
+
+- `subCategory`가 `Space`(space / nbspace / emspace 등)
+- soft hyphen(`softhyphen` / U+00AD 등)
+- 외형이 필요 없는 Separator(`Nonspacing` / `Format`: ZWJ, ZWNJ, bidi mark 등)
+
 ### 개발
 
 저장소 구조:
@@ -345,6 +363,12 @@ percent = round(sum(glyph_scores) / eligible_glyph_count * 100, 1)
 ```
 
 A glyph scores `1.0` when every master has shapes. Partial completion is counted as `drawn_masters / total_masters`.
+
+These glyphs stay in the total but always score `1.0` (complete) even without shapes:
+
+- `subCategory` is `Space` (space / nbspace / emspace, etc.)
+- soft hyphen (`softhyphen` / U+00AD, etc.)
+- shape-less Separators (`Nonspacing` / `Format`: ZWJ, ZWNJ, bidi marks, etc.)
 
 ### Development
 

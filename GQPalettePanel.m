@@ -239,7 +239,7 @@ static NSRect GQCardFrame(NSRect bounds) {
 }
 
 static NSString *GQGlyphUnit(void) {
-	return GQLocalized(@"Glyphs", @"Glyph", @"字形", @"글리프");
+	return @"Glyphs";
 }
 
 static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *GQScriptLabels(void) {
