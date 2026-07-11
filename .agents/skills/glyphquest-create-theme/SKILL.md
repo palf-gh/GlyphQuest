@@ -57,11 +57,16 @@ Keep copied PNGs only as temporary placeholders until real assets exist.
 Required files in `Resources/Themes/<id>/`:
 
 ```text
-scene.png        # wide background, text-free
-card.png         # 500×380 RGBA, 3-slice safe
-toggle-off.png   # 220×58 RGBA, text-free
+scene.png        # ultrawide ≈2.93:1 (canonical 2146×733), text-free
+card.png         # 500×380 RGBA, Forest-like margins (~6/6/7/7 LRTB)
+toggle-off.png   # 220×58 RGBA, text-free, Forest-like margins
 toggle-on.png    # 220×58 RGBA, same silhouette as off
 ```
+
+**Hard geometry** (scene ratio, card/toggle transparent margins, dark-card
+white text) is defined in **glyphquest-theme-assets** — read that skill before
+generating or accepting any PNG. Do not ship 16:9 scenes or cards with large
+empty transparent bands above/below the panel.
 
 ### User already provided images
 
@@ -94,9 +99,9 @@ and no baked-in text before continuing.
 
 | File | Size | Prompt focus |
 |------|------|--------------|
-| `scene.png` | wide (16:9 or wider) | Background only; no card, text, or UI chrome |
-| `card.png` | 500×380 | Game UI panel; transparent outer corners; quiet centre; caps match reference rhythm |
-| `toggle-off.png` | 220×58 | Button frame, opaque face, no text/knob/switch |
+| `scene.png` | ultrawide ≈2.93:1 (target 2146×733) | Background only; no card, text, or UI chrome — **not 16:9** |
+| `card.png` | 500×380 | Game UI panel filling most of the frame; transparent outer corners; quiet centre; caps match reference rhythm |
+| `toggle-off.png` | 220×58 | Button frame filling the canvas, opaque face, no text/knob/switch |
 | `toggle-on.png` | 220×58 | Same silhouette as off; brighter/active material |
 
 4. Save into `Resources/Themes/<id>/` with exact filenames above.

@@ -185,6 +185,58 @@ static void GQApplyNativeAppearanceToTheme(GQThemeSpec *theme) {
 	return height / 2.0;
 }
 
+- (BOOL)usesChamferCorners {
+	NSString *corner = nil;
+	id value = self.shape[@"corner"];
+	if ([value isKindOfClass:[NSString class]]) {
+		corner = (NSString *)value;
+	}
+	return [corner isEqualToString:@"chamfer"];
+}
+
+- (BOOL)usesSlantedFillEnd {
+	id value = self.shape[@"fill_end"];
+	if (![value isKindOfClass:[NSString class]]) {
+		return NO;
+	}
+	NSString *fillEnd = [(NSString *)value lowercaseString];
+	return [fillEnd isEqualToString:@"slant"] || [fillEnd isEqualToString:@"parallelogram"];
+}
+
+- (CGFloat)chamferForKey:(NSString *)key height:(CGFloat)height large:(BOOL)large {
+	NSString *specificKey = large ? key : [key stringByAppendingString:@"_small"];
+	id value = self.shape[specificKey];
+	if (!value || [value isKindOfClass:[NSNull class]]) {
+		value = self.shape[key];
+	}
+	if (!value || [value isKindOfClass:[NSNull class]]) {
+		value = self.shape[@"chamfer"];
+	}
+	if ([value isKindOfClass:[NSString class]] && [((NSString *)value) isEqualToString:@"auto"]) {
+		return fmax(1.0, height * 0.28);
+	}
+	if ([value isKindOfClass:[NSNumber class]]) {
+		return fmax(0.0, [(NSNumber *)value doubleValue]);
+	}
+	return fmax(1.0, height * 0.28);
+}
+
+- (CGFloat)fillEndShearForHeight:(CGFloat)height large:(BOOL)large {
+	NSString *key = large ? @"fill_end_shear" : @"fill_end_shear_small";
+	id value = self.shape[key];
+	if (!value || [value isKindOfClass:[NSNull class]]) {
+		value = self.shape[@"fill_end_shear"];
+	}
+	if ([value isKindOfClass:[NSString class]] && [((NSString *)value) isEqualToString:@"auto"]) {
+		return fmax(2.0, height);
+	}
+	if ([value isKindOfClass:[NSNumber class]]) {
+		return fmax(0.0, [(NSNumber *)value doubleValue]);
+	}
+	// Full-height diagonal tip (≈45°) by default.
+	return fmax(2.0, height);
+}
+
 @end
 
 @implementation GQThemeSpec
@@ -318,7 +370,7 @@ static NSBundle *GQThemeResourceBundle(void) {
 }
 
 static NSArray<NSString *> *GQPreferredThemeOrder(void) {
-	return @[@"system", @"forest", @"cyber", @"moonlight", @"candy", @"ocean", @"y2k"];
+	return @[@"system", @"forest", @"cyber", @"moonlight", @"candy", @"ocean", @"y2k", @"strike", @"leather"];
 }
 
 static NSArray<NSString *> *GQDiscoveredThemeIDs(NSBundle *bundle) {

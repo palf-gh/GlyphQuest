@@ -30,6 +30,10 @@ extern const CGFloat GQProgressCompleteThreshold;
 @property (nonatomic, strong) NSColor *nearFillStrokeColor;
 @property (nonatomic, strong) NSColor *completeFillStrokeColor;
 - (CGFloat)radiusForKey:(NSString *)key height:(CGFloat)height large:(BOOL)large;
+- (BOOL)usesChamferCorners;
+- (BOOL)usesSlantedFillEnd;
+- (CGFloat)chamferForKey:(NSString *)key height:(CGFloat)height large:(BOOL)large;
+- (CGFloat)fillEndShearForHeight:(CGFloat)height large:(BOOL)large;
 @end
 
 @interface GQThemeSpec : NSObject

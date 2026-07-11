@@ -1,0 +1,84 @@
+id: strike
+names:
+  en: Strike Protocol
+  ja: ストライクプロトコル
+  zh: 突击协议
+  ko: 스트라이크 프로토콜
+percent_font: "Orbitron-Black"
+card:
+  left_cap: 168
+  right_cap: 122
+  title_leading: 56
+colours:
+  title: "#F2F4F7"
+  progress_title: "#A8B0BA"
+  percent: "#FFFFFF"
+  count: "#9AA3AD"
+  toggle_text: "#FFFFFF"
+  toggle_shadow: "#120406CC"
+  settings_text: "#FFE6E6"
+  row_text: "#E8EEF5"
+  row_percent: "#FF5A5A"
+  row_top: "#1C1E22F0"
+  row_bottom: "#101215F0"
+  row_stroke: "#FF3B3B99"
+  row_accent: "#FF2E2EF2"
+progress:
+  shape:
+    corner: chamfer
+    fill_end: slant
+    fill_end_shear: auto
+    chamfer: 5
+    bezel_chamfer: 5
+    track_chamfer: 3.5
+    fill_chamfer: 3
+    gloss_chamfer: 2
+    bezel_chamfer_small: 2.5
+    track_chamfer_small: 2
+    fill_chamfer_small: 1.5
+    gloss_chamfer_small: 1
+  fill_mode: continuous
+  bezel:
+    top: "#3A3D44"
+    bottom: "#17191D"
+    stroke: "#FF3B3BCC"
+  track:
+    top: "#0B0C0E"
+    bottom: "#1A1C21"
+    stroke: "#FF4A4A66"
+  rim: "#FF6B6B66"
+  shadow: "#00000080"
+  fill:
+    - "#B31212"
+    - "#FF2E2E"
+    - "#FF7A3D"
+  near_fill:
+    - "#C45A00"
+    - "#FF8A1F"
+    - "#FFD166"
+  complete_fill:
+    - "#1F8A4C"
+    - "#33D17A"
+    - "#A8FFCF"
+  fill_stroke: "#FFB3B3CC"
+  near_fill_stroke: "#FFD199CC"
+  complete_fill_stroke: "#C8FFE0CC"
+  track_layers:
+    - kind: lines
+      angle: 135
+      spacing: 10
+      thickness: 0.75
+      colour: "#FFFFFF14"
+      inset: 2
+  fill_layers:
+    - kind: shapes
+      shape: parallelogram
+      spacing: 9
+      width: 4
+      shear: auto
+      inset_y: 2
+      colour: "#FFFFFF38"
+  gloss:
+    enabled: true
+    colour: "#FFFFFF"
+    alpha: 0.16

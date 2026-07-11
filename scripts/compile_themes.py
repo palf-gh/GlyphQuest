@@ -178,7 +178,7 @@ def compile_theme(source_dir: Path, output_dir: Path) -> None:
         json.dumps(data, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
-    print(f"Compiled {yaml_path.relative_to(ROOT)} -> {json_path.relative_to(ROOT)}")
+    print(f"Compiled {yaml_path} -> {json_path}")
 
 
 def main() -> int:

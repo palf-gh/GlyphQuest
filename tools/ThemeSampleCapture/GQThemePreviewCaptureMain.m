@@ -11,7 +11,7 @@ static const NSUInteger GQSampleTotalGlyphs = 3347;
 static const CGFloat GQSampleProgress = (746.0 / 3347.0) * 100.0;
 
 static NSArray<NSString *> *GQThemeOrder(void) {
-	return @[@"system-light", @"system-dark", @"forest", @"cyber", @"moonlight", @"candy", @"ocean", @"y2k"];
+	return @[@"system-light", @"system-dark", @"forest", @"cyber", @"moonlight", @"candy", @"ocean", @"y2k", @"strike", @"leather"];
 }
 
 static NSString *GQThemeIDForOrderEntry(NSString *entry) {
@@ -200,10 +200,10 @@ static NSImage *GQSnapshotView(NSView *view, CGFloat scale, NSAppearance *appear
 
 static NSImage *GQCompositeGallery(NSArray<NSImage *> *panels, NSArray<NSString *> *labels, CGFloat scale) {
 	const CGFloat columns = 4.0;
-	const CGFloat rows = 2.0;
+	const CGFloat rows = ceil((CGFloat)panels.count / columns);
 
 	CGFloat galleryWidth = GQGalleryPadding * 2.0 + columns * GQSamplePanelWidth + (columns - 1.0) * GQGalleryGapX;
-	CGFloat galleryHeight = GQGalleryPadding * 2.0 + rows * (GQSamplePanelHeight + GQGalleryLabelHeight) + (rows - 1.0) * GQGalleryGapY;
+	CGFloat galleryHeight = GQGalleryPadding * 2.0 + rows * (GQSamplePanelHeight + GQGalleryLabelHeight) + fmax(0.0, rows - 1.0) * GQGalleryGapY;
 
 	GQGalleryCompositorView *compositor = [[GQGalleryCompositorView alloc] initWithFrame:NSMakeRect(0.0, 0.0, galleryWidth, galleryHeight)];
 	compositor.panels = panels;

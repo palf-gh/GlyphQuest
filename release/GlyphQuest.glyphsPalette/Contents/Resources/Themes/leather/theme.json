@@ -1,0 +1,93 @@
+{
+  "id": "leather",
+  "names": {
+    "en": "Leather Bound",
+    "ja": "レザーバウンド",
+    "zh": "皮革装帧",
+    "ko": "레더 바운드"
+  },
+  "percent_font": "Quicksand-Bold",
+  "card": {
+    "left_cap": 132,
+    "right_cap": 120,
+    "title_leading": 22
+  },
+  "colours": {
+    "title": "#FFFFFFF5",
+    "progress_title": "#FFE8C8E6",
+    "percent": "#FFFFFF",
+    "count": "#FFE8C8E6",
+    "toggle_text": "#FFFFFF",
+    "toggle_shadow": "#3B1C0AB2",
+    "settings_text": "#FFFFFF",
+    "row_text": "#FFFFFFF5",
+    "row_percent": "#FFE8C8",
+    "row_top": "#5A3822F0",
+    "row_bottom": "#3A2416F0",
+    "row_stroke": "#E8C89A99",
+    "row_accent": "#E2B06AF2"
+  },
+  "progress": {
+    "shape": {
+      "bezel_radius": "auto",
+      "track_radius": "auto",
+      "fill_radius": "auto",
+      "gloss_radius": "auto"
+    },
+    "fill_mode": "continuous",
+    "bezel": {
+      "top": "#A87848",
+      "bottom": "#5C381C",
+      "stroke": "#2A180ECC"
+    },
+    "track": {
+      "top": "#1A100A",
+      "bottom": "#2E1C12",
+      "stroke": "#120A0699"
+    },
+    "rim": "#D4B08A44",
+    "shadow": "#1A0C0666",
+    "fill": [
+      "#6B3A14",
+      "#8F4E1C",
+      "#A86228"
+    ],
+    "near_fill": [
+      "#8A4A14",
+      "#C46E1E",
+      "#E0A040"
+    ],
+    "complete_fill": [
+      "#4A6A20",
+      "#7A9E30",
+      "#B0D050"
+    ],
+    "fill_stroke": "#3A200ECC",
+    "near_fill_stroke": "#5A3010CC",
+    "complete_fill_stroke": "#2A4014E6",
+    "track_layers": [],
+    "fill_layers": [],
+    "overlays": {
+      "bezel": {
+        "file": "progress-bezel.png",
+        "mode": "stretch",
+        "opacity": 0.92
+      },
+      "track": {
+        "file": "progress-track-overlay.png",
+        "mode": "stretch",
+        "opacity": 0.88
+      },
+      "fill": {
+        "file": "progress-fill-overlay.png",
+        "mode": "stretch",
+        "opacity": 0.95
+      }
+    },
+    "gloss": {
+      "enabled": true,
+      "colour": "#FFF0DC",
+      "alpha": 0.08
+    }
+  }
+}

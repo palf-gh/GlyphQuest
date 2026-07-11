@@ -106,6 +106,95 @@ static void GQDrawImageOverlay(NSBundle *bundle, GQThemeSpec *theme, NSDictionar
 	[NSGraphicsContext restoreGraphicsState];
 }
 
+/// Rectangle with diagonally cut corners (tactical HUD / chamfered plate).
+static NSBezierPath *GQBezierPathWithChamferedRect(NSRect rect, CGFloat chamfer) {
+	CGFloat maxCut = fmin(NSWidth(rect), NSHeight(rect)) * 0.5;
+	CGFloat cut = fmax(0.0, fmin(chamfer, maxCut));
+	if (cut < 0.5) {
+		return [NSBezierPath bezierPathWithRect:rect];
+	}
+	CGFloat minX = NSMinX(rect);
+	CGFloat maxX = NSMaxX(rect);
+	CGFloat minY = NSMinY(rect);
+	CGFloat maxY = NSMaxY(rect);
+	NSBezierPath *path = [NSBezierPath bezierPath];
+	[path moveToPoint:NSMakePoint(minX + cut, minY)];
+	[path lineToPoint:NSMakePoint(maxX - cut, minY)];
+	[path lineToPoint:NSMakePoint(maxX, minY + cut)];
+	[path lineToPoint:NSMakePoint(maxX, maxY - cut)];
+	[path lineToPoint:NSMakePoint(maxX - cut, maxY)];
+	[path lineToPoint:NSMakePoint(minX + cut, maxY)];
+	[path lineToPoint:NSMakePoint(minX, maxY - cut)];
+	[path lineToPoint:NSMakePoint(minX, minY + cut)];
+	[path closePath];
+	return path;
+}
+
+/// Progress fill with a full-height slanted leading edge matching parallelogram
+/// overlays (visual `/`: top extends further right than bottom in flipped views).
+static NSBezierPath *GQBezierPathWithSlantedFillEnd(NSRect rect, CGFloat leftChamfer, CGFloat shear) {
+	CGFloat minX = NSMinX(rect);
+	CGFloat maxX = NSMaxX(rect);
+	CGFloat minY = NSMinY(rect);
+	CGFloat maxY = NSMaxY(rect);
+	CGFloat width = NSWidth(rect);
+	CGFloat height = NSHeight(rect);
+	CGFloat cut = fmax(0.0, fmin(leftChamfer, fmin(width, height) * 0.5));
+	CGFloat tip = fmax(0.0, fmin(shear, fmax(0.0, width - cut - 1.0)));
+	if (tip < 0.5) {
+		if (cut < 0.5) {
+			return [NSBezierPath bezierPathWithRect:rect];
+		}
+		return GQBezierPathWithChamferedRect(rect, cut);
+	}
+	NSBezierPath *path = [NSBezierPath bezierPath];
+	if (cut < 0.5) {
+		[path moveToPoint:NSMakePoint(minX, minY)];
+		[path lineToPoint:NSMakePoint(maxX, minY)];
+		[path lineToPoint:NSMakePoint(maxX - tip, maxY)];
+		[path lineToPoint:NSMakePoint(minX, maxY)];
+	} else {
+		[path moveToPoint:NSMakePoint(minX + cut, minY)];
+		[path lineToPoint:NSMakePoint(maxX, minY)];
+		[path lineToPoint:NSMakePoint(maxX - tip, maxY)];
+		[path lineToPoint:NSMakePoint(minX + cut, maxY)];
+		[path lineToPoint:NSMakePoint(minX, maxY - cut)];
+		[path lineToPoint:NSMakePoint(minX, minY + cut)];
+	}
+	[path closePath];
+	return path;
+}
+
+static NSBezierPath *GQProgressShapePath(GQProgressStyle *style, NSRect rect, NSString *radiusKey, NSString *chamferKey, BOOL large) {
+	if ([style usesChamferCorners]) {
+		CGFloat chamfer = [style chamferForKey:chamferKey height:NSHeight(rect) large:large];
+		return GQBezierPathWithChamferedRect(rect, chamfer);
+	}
+	CGFloat radius = [style radiusForKey:radiusKey height:NSHeight(rect) large:large];
+	return [NSBezierPath bezierPathWithRoundedRect:rect xRadius:radius yRadius:radius];
+}
+
+static NSBezierPath *GQProgressFillPath(GQProgressStyle *style, NSRect rect, BOOL large, CGFloat shear) {
+	if ([style usesSlantedFillEnd] && shear >= 0.5) {
+		CGFloat leftChamfer = 0.0;
+		if ([style usesChamferCorners]) {
+			leftChamfer = [style chamferForKey:@"fill_chamfer" height:NSHeight(rect) large:large];
+		}
+		return GQBezierPathWithSlantedFillEnd(rect, leftChamfer, shear);
+	}
+	return GQProgressShapePath(style, rect, @"fill_radius", @"fill_chamfer", large);
+}
+
+static CGFloat GQLayerShearValue(id value, CGFloat bodyHeight) {
+	if ([value isKindOfClass:[NSString class]] && [((NSString *)value) isEqualToString:@"auto"]) {
+		return bodyHeight;
+	}
+	if ([value isKindOfClass:[NSNumber class]]) {
+		return fmax(0.0, [(NSNumber *)value doubleValue]);
+	}
+	return bodyHeight;
+}
+
 static void GQDrawStripesInRect(NSRect rect, NSDictionary *layer) {
 	NSColor *colour = GQColorFromHex(GQStringValue(layer[@"colour"], @"#FFFFFF29"));
 	CGFloat angle = GQNumberValue(layer[@"angle"], -55.0);
@@ -226,6 +315,28 @@ static void GQDrawShapesInRect(NSRect rect, NSDictionary *layer) {
 				[colour setFill];
 				[[NSBezierPath bezierPathWithRect:segment] fill];
 			}
+		} else if ([shape isEqualToString:@"parallelogram"]) {
+			// Visual `/` slant (top further right than bottom in flipped views).
+			CGFloat insetY = GQNumberValue(layer[@"inset_y"], 2.0);
+			CGFloat width = GQNumberValue(layer[@"width"], 4.0);
+			CGFloat bodyHeight = fmax(1.0, NSHeight(rect) - insetY * 2.0);
+			CGFloat shear = GQLayerShearValue(layer[@"shear"], bodyHeight);
+			CGFloat bottom = NSMaxY(rect) - insetY;
+			CGFloat top = bottom - bodyHeight;
+			NSBezierPath *path = [NSBezierPath bezierPath];
+			[path moveToPoint:NSMakePoint(x, bottom)];
+			[path lineToPoint:NSMakePoint(x + width, bottom)];
+			[path lineToPoint:NSMakePoint(x + width + shear, top)];
+			[path lineToPoint:NSMakePoint(x + shear, top)];
+			[path closePath];
+			if (stroke) {
+				[colour setStroke];
+				path.lineWidth = strokeWidth;
+				[path stroke];
+			} else {
+				[colour setFill];
+				[path fill];
+			}
 		} else {
 			NSRect oval = NSMakeRect(point.x - radius, point.y - radius, radius * 2.0, radius * 2.0);
 			NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect:oval];
@@ -314,8 +425,7 @@ static NSColor *GQStrokeColorForProgress(GQProgressStyle *style, CGFloat progres
 	}
 
 	NSRect bezelRect = large ? NSInsetRect(bounds, 0.5, 1.0) : bounds;
-	CGFloat bezelRadius = [style radiusForKey:@"bezel_radius" height:NSHeight(bezelRect) large:large];
-	NSBezierPath *bezel = [NSBezierPath bezierPathWithRoundedRect:bezelRect xRadius:bezelRadius yRadius:bezelRadius];
+	NSBezierPath *bezel = GQProgressShapePath(style, bezelRect, @"bezel_radius", @"bezel_chamfer", large);
 
 	NSShadow *shadow = [[NSShadow alloc] init];
 	shadow.shadowColor = style.shadowColor;
@@ -340,8 +450,7 @@ static NSColor *GQStrokeColorForProgress(GQProgressStyle *style, CGFloat progres
 	[bezel stroke];
 
 	NSRect trackRect = large ? NSInsetRect(bezelRect, 3.0, 3.0) : NSInsetRect(bezelRect, 1.5, 1.5);
-	CGFloat trackRadius = [style radiusForKey:@"track_radius" height:NSHeight(trackRect) large:large];
-	NSBezierPath *track = [NSBezierPath bezierPathWithRoundedRect:trackRect xRadius:trackRadius yRadius:trackRadius];
+	NSBezierPath *track = GQProgressShapePath(style, trackRect, @"track_radius", @"track_chamfer", large);
 	[NSGraphicsContext saveGraphicsState];
 	[track addClip];
 	NSGradient *trackGradient = [[NSGradient alloc] initWithColors:@[style.trackTopColor, style.trackBottomColor]];
@@ -354,22 +463,49 @@ static NSColor *GQStrokeColorForProgress(GQProgressStyle *style, CGFloat progres
 	[NSGraphicsContext restoreGraphicsState];
 
 	CGFloat fillWidth = NSWidth(trackRect) * (progress / 100.0);
-	if (fillWidth >= 2.0) {
+	CGFloat baseShear = [style usesSlantedFillEnd]
+		? [style fillEndShearForHeight:NSHeight(trackRect) large:large]
+		: 0.0;
+	// Collapse the tip as we approach 100% so the cut disappears when full.
+	// Hide the tip entirely while there is not enough fill to form it (≈0%).
+	CGFloat remaining = fmax(0.0, NSWidth(trackRect) - fillWidth);
+	CGFloat fillShear = fmin(baseShear, remaining);
+	BOOL showFill = fillWidth >= 2.0;
+	if ([style usesSlantedFillEnd] && baseShear >= 0.5) {
+		// Need a short body plus the tip; avoids a lone wedge near 0%.
+		showFill = fillWidth > fillShear + 1.0;
+	}
+	if (showFill) {
 		NSRect fillRect = NSMakeRect(NSMinX(trackRect), NSMinY(trackRect), fillWidth, NSHeight(trackRect));
-		CGFloat fillRadius = [style radiusForKey:@"fill_radius" height:NSHeight(fillRect) large:large];
-		NSBezierPath *fillPath = [NSBezierPath bezierPathWithRoundedRect:fillRect xRadius:fillRadius yRadius:fillRadius];
+		NSBezierPath *fillPath = GQProgressFillPath(style, fillRect, large, fillShear);
 		[NSGraphicsContext saveGraphicsState];
+		[track addClip];
 		[fillPath addClip];
 		if ([style.fillMode isEqualToString:@"segments"]) {
 			CGFloat segmentWidth = GQNumberValue(style.segments[@"width"], 4.0);
 			CGFloat gap = GQNumberValue(style.segments[@"gap"], 5.0);
 			CGFloat insetY = GQNumberValue(style.segments[@"inset_y"], 2.0);
+			NSString *segmentShape = GQStringValue(style.segments[@"shape"], @"rect");
 			NSArray<NSColor *> *fillColors = GQFillColorsForProgress(style, progress);
 			NSColor *segmentColor = fillColors.firstObject ?: NSColor.systemBlueColor;
 			[segmentColor setFill];
+			CGFloat bodyHeight = fmax(1.0, NSHeight(fillRect) - insetY * 2.0);
+			CGFloat shear = GQLayerShearValue(style.segments[@"shear"], bodyHeight);
 			for (CGFloat x = NSMinX(fillRect); x < NSMaxX(fillRect); x += segmentWidth + gap) {
-				NSRect segment = NSMakeRect(x, NSMinY(fillRect) + insetY, segmentWidth, fmax(1.0, NSHeight(fillRect) - insetY * 2.0));
-				[[NSBezierPath bezierPathWithRect:segment] fill];
+				if ([segmentShape isEqualToString:@"parallelogram"]) {
+					CGFloat bottom = NSMaxY(fillRect) - insetY;
+					CGFloat top = bottom - bodyHeight;
+					NSBezierPath *segment = [NSBezierPath bezierPath];
+					[segment moveToPoint:NSMakePoint(x, bottom)];
+					[segment lineToPoint:NSMakePoint(x + segmentWidth, bottom)];
+					[segment lineToPoint:NSMakePoint(x + segmentWidth + shear, top)];
+					[segment lineToPoint:NSMakePoint(x + shear, top)];
+					[segment closePath];
+					[segment fill];
+				} else {
+					NSRect segment = NSMakeRect(x, NSMinY(fillRect) + insetY, segmentWidth, bodyHeight);
+					[[NSBezierPath bezierPathWithRect:segment] fill];
+				}
 			}
 		} else {
 			NSGradient *fillGradient = [[NSGradient alloc] initWithColors:GQFillColorsForProgress(style, progress)];
@@ -384,19 +520,24 @@ static NSColor *GQStrokeColorForProgress(GQProgressStyle *style, CGFloat progres
 		if (GQBoolValue(style.gloss[@"enabled"], YES)) {
 			NSColor *glossColor = GQColorFromHex(GQStringValue(style.gloss[@"colour"], @"#FFFFFF"));
 			CGFloat glossAlpha = GQNumberValue(style.gloss[@"alpha"], large ? 0.22 : 0.18);
-			CGFloat glossRadius = [style radiusForKey:@"gloss_radius" height:NSHeight(fillRect) large:large];
 			NSRect glossRect = large
 				? NSMakeRect(NSMinX(fillRect) + 2.0, NSMinY(fillRect) + 2.0, fmax(0.0, NSWidth(fillRect) - 4.0), NSHeight(fillRect) * 0.34)
 				: NSMakeRect(NSMinX(fillRect) + 1.0, NSMaxY(fillRect) - fmax(1.0, NSHeight(fillRect) * 0.4) - 1.0, fmax(0.0, NSWidth(fillRect) - 2.0), fmax(1.0, NSHeight(fillRect) * 0.4));
-			NSBezierPath *gloss = [NSBezierPath bezierPathWithRoundedRect:glossRect xRadius:glossRadius yRadius:glossRadius];
+			CGFloat glossShear = fillShear > 0.5 ? fmin(fillShear, NSWidth(glossRect) * 0.9) : 0.0;
+			NSBezierPath *gloss = [style usesSlantedFillEnd]
+				? GQProgressFillPath(style, glossRect, large, glossShear)
+				: GQProgressShapePath(style, glossRect, @"gloss_radius", @"gloss_chamfer", large);
 			[[glossColor colorWithAlphaComponent:glossAlpha] setFill];
 			[gloss fill];
 		}
 		[NSGraphicsContext restoreGraphicsState];
 
+		[NSGraphicsContext saveGraphicsState];
+		[track addClip];
 		[GQStrokeColorForProgress(style, progress) setStroke];
 		fillPath.lineWidth = 1.0;
 		[fillPath stroke];
+		[NSGraphicsContext restoreGraphicsState];
 	}
 
 	if (large && style.trackStrokeColor) {
@@ -408,9 +549,8 @@ static NSColor *GQStrokeColorForProgress(GQProgressStyle *style, CGFloat progres
 	if (style.rimColor) {
 		[style.rimColor setStroke];
 		CGFloat rimInset = large ? 1.25 : 0.75;
-		NSBezierPath *rim = [NSBezierPath bezierPathWithRoundedRect:NSInsetRect(bezelRect, rimInset, rimInset)
-															xRadius:fmax(1.0, bezelRadius - rimInset)
-															yRadius:fmax(1.0, bezelRadius - rimInset)];
+		NSRect rimRect = NSInsetRect(bezelRect, rimInset, rimInset);
+		NSBezierPath *rim = GQProgressShapePath(style, rimRect, @"bezel_radius", @"bezel_chamfer", large);
 		rim.lineWidth = 0.75;
 		[rim stroke];
 	}
