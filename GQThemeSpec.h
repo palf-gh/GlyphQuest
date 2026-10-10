@@ -86,6 +86,8 @@ extern const CGFloat GQProgressCompleteThreshold;
 @end
 
 NSColor * _Nullable GQColorFromHex(NSString * _Nullable hex);
+/// The image at `url`, read from disk once: palettes redraw on every interface update.
+NSImage * _Nullable GQCachedImage(NSURL * _Nullable url);
 NSArray<NSColor *> *GQColorsFromHexArray(id _Nullable value);
 GQProgressStyle *GQProgressStyleFromDictionary(NSDictionary * _Nullable dictionary);
 

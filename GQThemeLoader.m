@@ -33,6 +33,25 @@ static NSString *GQLocalizedName(NSString *english, NSString *japanese, NSString
 	return english;
 }
 
+NSImage *GQCachedImage(NSURL *url) {
+	if (!url) {
+		return nil;
+	}
+	static NSCache<NSURL *, NSImage *> *cache;
+	static dispatch_once_t once;
+	dispatch_once(&once, ^{
+		cache = [[NSCache alloc] init];
+	});
+	NSImage *image = [cache objectForKey:url];
+	if (!image) {
+		image = [[NSImage alloc] initWithContentsOfURL:url];
+		if (image) {
+			[cache setObject:image forKey:url];
+		}
+	}
+	return image;
+}
+
 NSColor *GQColorFromHex(NSString *hex) {
 	if (hex.length == 0) {
 		return NSColor.clearColor;
@@ -246,11 +265,7 @@ static void GQApplyNativeAppearanceToTheme(GQThemeSpec *theme) {
 }
 
 - (NSImage *)imageNamed:(NSString *)name inBundle:(NSBundle *)bundle {
-	NSURL *url = [bundle URLForResource:name withExtension:@"png" subdirectory:self.resourceSubdirectory];
-	if (!url) {
-		return nil;
-	}
-	return [[NSImage alloc] initWithContentsOfURL:url];
+	return GQCachedImage([bundle URLForResource:name withExtension:@"png" subdirectory:self.resourceSubdirectory]);
 }
 
 - (NSColor *)progressBezelTopColor { return self.progressStyle.bezelTopColor; }

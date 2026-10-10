@@ -88,6 +88,7 @@
 }
 
 - (void)dealloc {
+	[NSObject cancelPreviousPerformRequestsWithTarget:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -221,6 +222,17 @@
 
 - (void)glyphsInterfaceDidUpdate:(NSNotification *)notification {
 	(void)notification;
+	// Glyphs posts this on every mouse-drag event while editing: count the
+	// glyphs once for a burst of updates, after the mouse button is released.
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(flushDisplayUpdate) object:nil];
+	[self performSelector:@selector(flushDisplayUpdate) withObject:nil afterDelay:0.0];
+}
+
+- (void)flushDisplayUpdate {
+	if (NSEvent.pressedMouseButtons != 0) {
+		[self performSelector:@selector(flushDisplayUpdate) withObject:nil afterDelay:0.25];
+		return;
+	}
 	[self updateDisplay];
 }
 

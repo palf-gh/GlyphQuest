@@ -73,7 +73,7 @@ static void GQDrawImageOverlay(NSBundle *bundle, GQThemeSpec *theme, NSDictionar
 	}
 	NSString *name = [file stringByDeletingPathExtension];
 	NSString *extension = file.pathExtension.length > 0 ? file.pathExtension : @"png";
-	NSImage *image = [[NSImage alloc] initWithContentsOfURL:[bundle URLForResource:name withExtension:extension subdirectory:theme.resourceSubdirectory]];
+	NSImage *image = GQCachedImage([bundle URLForResource:name withExtension:extension subdirectory:theme.resourceSubdirectory]);
 	if (!image) {
 		return;
 	}
